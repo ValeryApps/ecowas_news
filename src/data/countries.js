@@ -1,0 +1,23 @@
+export const countries = [
+  { name: "Benin", value: "Benin", flag: "../../flags/bj.svg" },
+  { name: "Burkina Faso", value: "Burkina_Faso", flag: "../../flags/bf.svg" },
+  { name: "Cabo Verde", value: "Cabo_Verde", flag: "../../flags/cv.svg" },
+  { name: "Cote d'Ivoire", value: "Cote_d'Ivoire", flag: "../../flags/ci.svg" },
+  { name: "Gambia", value: "Gambia", flag: "../../flags/cr.svg" },
+  { name: "Ghana", value: "Ghana", flag: "../../flags/gh.svg" },
+  { name: "Guinea", value: "Guinea", flag: "../../flags/gn.svg" },
+  { name: "Guinea-Bissau", value: "Guinea-Bissau", flag: "../../flags/gw.svg" },
+  { name: "Liberia", value: "Liberia", flag: "../../flags/lr.svg" },
+  { name: "Mali", value: "Mali", flag: "../../flags/ml.svg" },
+  { name: "Niger", value: "Niger", flag: "../../flags/ne.svg" },
+  { name: "Nigeria", value: "Nigeria", flag: "../../flags/ng.svg" },
+  { name: "Senegal", value: "Senegal", flag: "../../flags/sl.svg" },
+  { name: "Sierra Leone", value: "Sierra_Leone", flag: "../../flags/sn.svg" },
+  { name: "Togo", value: "Togo", flag: "../../flags/tg.svg" },
+  { name: "Africa", flag: "/images/africa.webp", value: "africa" },
+  {
+    name: "International",
+    flag: "/images/world.png",
+    value: "International",
+  },
+];

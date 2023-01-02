@@ -1,13 +1,181 @@
-body {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* @import '@fontsource/roboto/300.css';
+@import '@fontsource/roboto/400.css';
+@import '@fontsource/roboto/500.css';
+@import '@fontsource/roboto/700.css'; */
+
+* {
+  padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+  background: rgb(222, 226, 225);
+  overflow-y: hidden;
+}
+
+html {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover {
+  color: darkslategrey;
+}
+
+:root {
+  --bg-primary: #fff;
+  --bg-secondary: #f0f2f5;
+  --bg-third: #e4e6eb;
+  --bg-forth: #f0f2f5;
+  --color-primary: #050505;
+  --color-secondary: #65676b;
+  --divider: #ced0d4;
+  --dark-bg-primary: #18191a;
+  --dark-bg-secondary: #242526;
+  --dark-bg-third: #3a3b3c;
+  --dark-color-primary: #242526;
+  --dark-color-secondary: #b0b3b8;
+  --green-val-color: #047260;
+  --bl-color: #78f1dd;
+  --green-color: #758103;
+  --light-green-val-color: #e7f3ff;
+  --border-color: #ccced2;
+  --shadow-1: rgba(0, 0, 0, 0.2);
+  --shadow-2: rgba(0, 0, 0, 0.1);
+  --shadow-3: rgba(0, 0, 0, 0.3);
+  --shadow-4: rgba(0, 0, 0, 0.4);
+  --shadow-inset: rgba(255, 255, 255, 0.5);
+}
+
+/* buttons */
+.blue_btn,
+.gray_btn,
+.light_blue_btn {
+  border: 0;
+  outline: 0;
+  border-radius: 7px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 6.5px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.gray_btn {
+  background-color: var(--dark-color-secondary);
+}
+
+.blue_btn {
+  background-color: var(--green-val-color);
+}
+
+.light_blue_btn {
+  background-color: var(--light-green-val-color);
+}
+
+.blur {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.768);
+  z-index: 100;
+}
+
+.hover1:hover {
+  background: var(--bg-secondary);
+}
+
+.hover2:hover {
+  background: var(--bg-third);
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 5px;
+  border-radius: 1px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: rgb(199, 197, 197);
+}
+
+.small_circle {
+  position: relative;
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 11px;
+  background: var(--bg-third);
+  cursor: pointer;
+}
+
+.success_text {
+  color: #0eaa54;
+}
+
+.error_text {
+  color: #ad2323;
+}
+
+/*----filters---*/
+.filter_blue {
+  filter: invert(39%) sepia(57%) saturate(200%) saturate(200%) saturate(200%) saturate(200%) saturate(200%) saturate(147.75%) hue-rotate(202deg) brightness(97%) contrast(96%);
+}
+
+/*----filters---*/
+body::-webkit-scrollbar {
+  width: 8px;
+  /* width of the entire scrollbar */
+}
+
+/* body::-webkit-scrollbar-track {
+  background: orange;       
+} 
+*/
+
+body::-webkit-scrollbar-thumb {
+  background-color: rgb(138, 138, 141);
+  /* color of the scroll thumb */
+  border-radius: 20px;
+  /* roundness of the scroll thumb */
+  /* border: 3px solid orange;  creates padding around scroll thumb */
+}
+
+@media (max-width:800px) {
+  .container_fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+@media (min-width:1024px) {
+  .home {
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
+
+  .layout {
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
 }

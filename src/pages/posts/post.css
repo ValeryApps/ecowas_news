@@ -1,0 +1,137 @@
+.form {
+  width: 80%;
+  padding-bottom: 100px;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  box-shadow: 0 1px 2px var(--shadow-1);
+  background-color: var(--bg-primary);
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 20px;
+}
+
+.edi_preview {
+  display: flex;
+  justify-content: space-between;
+}
+
+.edi_preview .editor {
+  width: 50%;
+}
+
+.edi_preview .preview {
+  width: 35%;
+}
+
+.post_input_wrap {
+  position: relative;
+  width: 50% !important;
+  display: flex;
+  gap: 39px;
+  flex-direction: column;
+  align-items: center;
+
+}
+
+.post_input_wrap input {
+  outline: none;
+  border: 1px solid var(--bg-third);
+  width: 90%;
+  background: var(--bg-primary);
+  height: 40px;
+  border-radius: 10px;
+  font-size: 17px;
+  padding-left: 10px;
+  margin-bottom: 5px;
+  color: var(--color-primary);
+}
+
+.post_input_wrap select {
+  outline: none;
+  border: 1px solid var(--bg-third);
+  width: 90%;
+  background: var(--bg-primary);
+  height: 40px;
+  border-radius: 10px;
+  font-size: 17px;
+  padding-left: 10px;
+  margin-bottom: 5px;
+  color: var(--color-primary);
+}
+
+.post_input_wrap button {
+  position: relative;
+  outline: none;
+  border: 1px solid var(--bg-third);
+  width: 100%;
+  background: var(--green-val-color);
+  height: 40px;
+  border-radius: 10px;
+  font-size: 17px;
+  padding-left: 10px;
+  margin-bottom: 5px;
+  color: var(--bg-primary);
+  left: 50%;
+  cursor: pointer;
+}
+
+.form h1 {
+  color: var(--green-val-color);
+  font-size: 3rem;
+  text-shadow: 2px 1px #474646;
+}
+
+.single_story {
+  display: flex;
+  justify-content: space-between;
+  margin-right: 10px;
+}
+
+.read_also {
+  max-width: 28%;
+  background: #fff;
+  padding: 10px;
+}
+
+.read_also span {
+  display: block;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--green-val-color);
+  margin-bottom: 1rem;
+  border-bottom: var(--green-val-color) 1px solid;
+  padding-bottom: .5rem;
+}
+
+.read_story {
+  max-width: 70%;
+  background: #fff;
+  padding: 10px;
+}
+
+.read_story .story_title {
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+
+.read_story img {
+  width: 100%;
+}
+
+.similar {
+  margin-bottom: 2rem;
+  border-bottom: var(--green-val-color) 1px solid;
+  padding-bottom: 1rem;
+}
+
+@media (max-width:636px) {
+  .read_also {
+    display: none;
+  }
+
+  .read_story {
+    max-width: 100%;
+  }
+}

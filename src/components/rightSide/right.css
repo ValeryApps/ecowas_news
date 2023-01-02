@@ -1,0 +1,21 @@
+.right_side {
+    background-color: #fff;
+    padding: 10px;
+}
+
+.right_logo img {
+    width: 100%;
+    object-fit: cover;
+    place-content: center;
+}
+
+.right_logo {
+    border-bottom: #ccc solid 1px;
+}
+
+.ecowas_tv {
+    text-align: center;
+    font-weight: 700;
+    margin-top: 10px;
+    color: var(--green-val-color);
+}

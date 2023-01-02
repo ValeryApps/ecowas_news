@@ -1,0 +1,146 @@
+@import "react-slideshow-image/dist/styles.css";
+
+
+.secondary .index:nth-child(1) {
+    width: 60%;
+    height: 50%;
+    object-fit: cover;
+}
+
+.secondary .index:nth-child(2) {
+    width: 49%;
+    height: 50%;
+    object-fit: cover;
+    /* grid-column-start: 1;
+  grid-column-end: 2;
+  grid-row-start: 2;
+  grid-row-end: 3; */
+    margin-right: 10px;
+    display: inline;
+}
+
+.secondary .index:nth-child(6) {
+    width: 49%;
+    height: 50%;
+    object-fit: cover;
+    overflow: hidden;
+    left: 100px;
+    display: inline;
+    /* grid-column-start: 2;
+  grid-column-end: 3;
+  grid-row-start: 1;
+  grid-row-end: 2; */
+}
+
+.index1 {
+    width: 59%;
+    height: 50%;
+    overflow: hidden;
+}
+
+.index1 img {
+    width: 100%;
+    height: 96%;
+    object-fit: cover;
+    /* border-bottom: #fff 2px solid; */
+}
+
+.index2 {
+    width: 40%;
+    height: 50%;
+}
+    .index3 {
+        width: 59%;
+        height: 50%;
+        bottom: 1px;
+        position: absolute;
+        right: -1px;
+    }
+
+.index2 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.index4 {
+    width: 40%;
+    height: 50%;
+    position: absolute;
+    right: -1px;
+    bottom: 168px;
+    justify-content: end;
+    overflow: hidden;
+
+}
+.index4 img{
+    width: 100%;
+    height: 96%;
+}
+
+.index3 .title {
+    transform: translateX(2px);
+}
+
+.index3 img {
+    width: 98%;
+    height: 100%;
+    object-fit: cover;
+    transform: translateX(5px);
+}
+
+.title {
+    color: #fff;
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.5);
+    bottom: 4rem;
+    height: 60px;
+    width: 98%;
+    /* place-content: center; */
+    /* display: hidden; */
+    /* margin-right: auto;
+    margin-left: auto;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px; */
+
+}
+
+.indicators {
+    position: relative;
+    top: -70px !important;
+}
+
+.title h3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    /* number of lines to show */
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+
+@keyframes showDiv {
+    from {
+        width: 0%;
+    }
+
+    to {
+        width: 100%;
+    }
+
+    from {
+        width: 100%;
+    }
+
+    to {
+        width: 0%;
+    }
+}
+
+
+@media (max-width:500px) {
+    .secondary {
+        display: none;
+    }
+}
