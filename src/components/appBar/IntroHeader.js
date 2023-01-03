@@ -12,7 +12,7 @@ export const IntroHeader = ({ country }) => {
 
         <img
           src={country?.flag}
-          alt={country.value}
+          alt={country?.value}
           className="h-[40px] shadow-2xl"
         />
       </div>
