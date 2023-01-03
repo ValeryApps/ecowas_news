@@ -14,6 +14,7 @@ import { categories } from "../../data/categories";
 import { RightMenu } from "./RightMenu";
 import { useAuthStatus } from "../../hooks/useAuthStatus";
 import { getAuth } from "firebase/auth";
+import { countries } from "../../data/countries";
 
 const navItems = [{ name: "Home", path: "/" }];
 
@@ -24,6 +25,7 @@ export const AppHeader = ({ visible, setVisible, isVisible, setIsVisible }) => {
   // const [isVisible, setIsVisible] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { pathname } = useLocation();
+  console.log(pathname);
   // const token = user?.token ? jwt_decode(user?.token) : "";
   // const { isModerator } = token;
   const [showCategories, setShowCategories] = useState(false);
@@ -34,11 +36,16 @@ export const AppHeader = ({ visible, setVisible, isVisible, setIsVisible }) => {
     loggedIn = false;
     navigate("/");
   };
+  console.log(pathname.substring(pathname.lastIndexOf("/") + 1));
+
+  const nation = countries.find(
+    (x) => x.value === pathname.substring(pathname.lastIndexOf("/") + 1)
+  );
 
   return (
     <>
       <div className="top_header relative hidden md:block">
-        <IntroHeader />
+        <IntroHeader country={nation} />
         {showCategories && (
           <CategoriesMenu
             categories={categories.slice(3)}
@@ -130,7 +137,9 @@ export const AppHeader = ({ visible, setVisible, isVisible, setIsVisible }) => {
               ) : (
                 <div
                   className="user_nav_item"
-                  onClick={() => setShowUserMenu((prev) => !prev)}
+                  onMouseOver={() => setShowUserMenu(true)}
+                  onMouseOut={() => setShowUserMenu(false)}
+                  // onClick={}
                 >
                   {/* <img src={user.picture} alt="" />{" "}? */}
                   <span className="text-white p-2">

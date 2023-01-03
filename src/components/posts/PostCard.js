@@ -1,3 +1,4 @@
+import Moment from "react-moment";
 import { Link } from "react-router-dom";
 import { countries } from "../../data/countries";
 export const PostCard = ({ story }) => {
@@ -15,6 +16,11 @@ export const PostCard = ({ story }) => {
         alt=""
         className="lg:h-[150px] w-full h:[100px]"
       />
+      <img
+        src={item?.flag}
+        alt="flag"
+        className="w-[20px] max-h-5 absolute top-0"
+      />
       <div className="px-2 flex flex-col justify-between overflow-hidden  h-[100px]">
         <Link to={`/post/${story.slug}`}>
           <h5
@@ -24,14 +30,13 @@ export const PostCard = ({ story }) => {
             {story.title}
           </h5>
         </Link>
-        <div className="flex gap-2 max-w-sm  overflow-hidden ">
-          {story.country}
-          <img
-            src={item?.flag}
-            alt=""
-            className="w-[30px] max-h-5 object-cover"
-          />
+
+        <div className="flex gap-2 max-w-sm  overflow-hidden items-center">
+          By:<span className="text-gray-500 font-bold">{story.author}</span>
         </div>
+        <span className="bg-teal-700 w-fit px-3 rounded-md text-white">
+          <Moment fromNow date={new Date(story.createdAt * 1)}></Moment>
+        </span>
       </div>
     </div>
   );

@@ -1,19 +1,35 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { GrUserSettings, GrAdd } from "react-icons/gr";
+import { FiLogOut } from "react-icons/fi";
 
 export const UserMenu = ({ logout }) => {
   return (
-    <div className="userMenu z-[70]">
+    <div className="h-[150px] w-[150px] bg-white absolute right-3 text-black z-[60] p-1">
       <ul>
-        <li>
-          <Link to="/setting">SETTING</Link>
+        <li className="hover:bg-gray-200 rounded-lg font-semibold  ">
+          <Link className="flex items-center gap-3" to="/setting">
+            <GrUserSettings />
+
+            <span className="hover:text-teal-500 text-gray-700"> SETTING</span>
+          </Link>
         </li>
 
-        <li>
-          <Link to="/create-post">ADD POST</Link>
+        <li className="hover:bg-gray-200 rounded-lg font-semibold ">
+          <Link className="flex items-center gap-3" to="/create-post">
+            <GrAdd />
+
+            <span className="hover:text-teal-500 text-gray-700"> ADD POST</span>
+          </Link>
         </li>
 
-        <li onClick={logout}>LOGOUT</li>
+        <li
+          className="hover:bg-gray-200 rounded-lg font-semibold flex items-center gap-3"
+          onClick={logout}
+        >
+          <FiLogOut />
+          <span className="hover:text-teal-500  text-gray-700"> LOGOUT</span>
+        </li>
       </ul>
     </div>
   );

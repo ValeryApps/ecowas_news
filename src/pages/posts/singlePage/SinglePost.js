@@ -154,7 +154,7 @@ export const SinglePost = () => {
                 className="ml-3"
               ></Moment>
             </div>
-            <div className="story_text px-3">
+            <div className="story_text px-3 text-gray-700">
               <div
                 dangerouslySetInnerHTML={createMarkup(post?.description)}
               ></div>
