@@ -71,12 +71,20 @@ export const AddPost = () => {
     let currentContentAsHTML = convertToHTML(editorState.getCurrentContent());
     setFormData((prev) => ({ ...prev, description: currentContentAsHTML }));
   };
+  const resetForm = () => {
+    setEditorState(null);
+    setFormData({});
+    setImages([]);
+  };
   const handleSubmit = async (e) => {
     let imageUrls;
     e.preventDefault();
     try {
       setLoading(true);
-      const slug = `${formData.title.replaceAll(" ", "-")}-${Date.now()}`;
+      const slug = `${formData.title
+        .replaceAll("/", "")
+        .replaceAll("?", "")
+        .replaceAll(" ", "-")}-${Date.now()}`;
       if (fileArray.length > 0) {
         imageUrls = await Promise.all(
           [...fileArray].map((file) => {
@@ -106,7 +114,7 @@ export const AddPost = () => {
         await add_post(post, post.id);
         dispatch(createPost(post));
         setLoading(false);
-        // resetForm();
+        resetForm();
       } else {
         let post = {
           ...formData,
@@ -122,6 +130,7 @@ export const AddPost = () => {
         await add_post(post, post.id);
         dispatch(createPost(post));
         setLoading(false);
+        resetForm();
       }
     } catch (error) {
       setLoading(false);

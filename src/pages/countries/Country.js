@@ -25,7 +25,7 @@ export const Country = () => {
       </Helmet>
 
       {posts?.length > 0 ? (
-        <div className="flex">
+        <div className="flex flex-wrap">
           {posts?.map((story, index) => (
             <div
               className="w-full md:w-[47%] lg:w-[31%] xl:w-[23%] mr-3"

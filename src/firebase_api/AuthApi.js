@@ -4,7 +4,7 @@ import {
   updateProfile,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
 const auth = getAuth();
 
@@ -41,4 +41,16 @@ export const register_user = async (userInfo) => {
 };
 export const logout = async () => {
   await auth.signOut();
+};
+
+export const getUserById = async (userId) => {
+  try {
+    const userData = await getDoc(doc(db, "users", userId));
+    if (userData.exists()) {
+      return userData.data();
+    }
+    return null;
+  } catch (error) {
+    console.log(error.message);
+  }
 };

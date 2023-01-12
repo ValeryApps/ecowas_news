@@ -10,18 +10,20 @@ const CreateComment = ({ submitComment, text, setText, commentLoading }) => {
           onChange={(e) => setText(e.target.value)}
           value={text}
           placeholder="Write a comment"
-          className="w-full rounded-md px-3"
-          rows={2}
+          className="w-full rounded-md px-3 max-w-[80%] pt-1 text-md bg-gray-300 focus:bg-white mt-3"
+          rows={3}
         ></textarea>
-        <div className="spin_loader">
-          {!commentLoading ? (
-            <div className=" " onClick={submitComment}>
-              <IoSend size={36} color="green" />
-            </div>
-          ) : (
-            <PulseLoader color="#af9af1" loading={commentLoading} />
-          )}
-        </div>
+        {text.trim() && (
+          <div className="spin_loader">
+            {!commentLoading ? (
+              <div className=" cursor-pointer " onClick={submitComment}>
+                <IoSend size={20} color="green" />
+              </div>
+            ) : (
+              <PulseLoader color="#af9af1" loading={commentLoading} size={10} />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

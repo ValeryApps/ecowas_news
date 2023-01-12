@@ -6,7 +6,11 @@
 @import '@fontsource/roboto/400.css';
 @import '@fontsource/roboto/500.css';
 @import '@fontsource/roboto/700.css'; */
-
+@layer components{
+  .login_2_wrap {
+    @apply flex flex-col items-center bg-white  shadow-lg pb-6 w-full sm:w-[350px] h-fit  rounded-lg
+  }
+}
 * {
   padding: 0;
   margin: 0;

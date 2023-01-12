@@ -5,6 +5,7 @@ const initialState = {
   comments: [],
   status: "idle", //'idle' | 'loading' | 'succeeded' | 'failed'
   error: null,
+  count: 0,
 };
 export const fetchCommentsAsync = createAsyncThunk(
   "comments/fetchCommentAsync",
@@ -20,6 +21,11 @@ const commentSlice = createSlice({
     addComment: (state, action) => {
       state.comments.push(action.payload);
     },
+    getCommentCount: (state, action) => {
+      state.count = state.comments.filter(
+        (x) => x.postId === action.payload
+      ).length;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchCommentsAsync.pending, (state) => {
@@ -27,6 +33,7 @@ const commentSlice = createSlice({
     });
     builder.addCase(fetchCommentsAsync.fulfilled, (state, action) => {
       state.comments = action.payload;
+      state.count = state.comments.length;
       state.status = "succeeded";
     });
     builder.addCase(fetchCommentsAsync.rejected, (state, action) => {
@@ -38,5 +45,5 @@ const commentSlice = createSlice({
 });
 
 export const selectAllComments = (state) => state.comments;
-export const { addComment, fetchComments } = commentSlice.actions;
+export const { addComment, getCommentCount } = commentSlice.actions;
 export default commentSlice.reducer;

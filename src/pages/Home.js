@@ -16,7 +16,8 @@ import { BiHealth } from "react-icons/bi";
 import { SpinnerComponent } from "../components/SpinnerComponent";
 import { useEffect } from "react";
 import { fetch_Posts } from "../firebase_api/postApi";
-import { useMediaQuery } from "react-responsive";
+// import { useMediaQuery } from "react-responsive";
+import { getAuth } from "firebase/auth";
 
 export const Home = () => {
   const { posts, status, error } = useSelector((state) => ({ ...state.posts }));
@@ -29,10 +30,8 @@ export const Home = () => {
   const educations = posts?.filter((x) => x.category === "education");
   const healths = posts?.filter((x) => x.category === "health");
   const entertainments = posts?.filter((x) => x.category === "entertainment");
-  const mdWith = useMediaQuery({
-    query: "(max-width:640px)",
-  });
-  console.log(mdWith);
+  const auth = getAuth();
+
   const postTitles = posts?.map((post) => {
     return post?.title;
   });
@@ -43,13 +42,13 @@ export const Home = () => {
       } catch (error) {}
     };
     fetchPosts();
-  }, [dispatch]);
+  }, [dispatch, auth]);
   if (status === "loading") {
     return <SpinnerComponent />;
   }
   if (error || posts?.length === 0) {
     return (
-      <div className="w-full h-full static right-0 left-0 top-0 bottom-0 content-center">
+      <div className="w-full min-h-[600px] static right-0 left-0 top-0 bottom-0 content-center ">
         <h1 className="text-5xl text-red-700 text-center">
           Sorry! Could not fetch data. Please check your connection{" "}
         </h1>
@@ -57,7 +56,7 @@ export const Home = () => {
     );
   }
   return (
-    <div className="lg:px-10" style={{ marginTop: "20px" }}>
+    <div className="lg:px-10 mt-[20px]">
       <Helmet>
         <title>Home</title>
       </Helmet>

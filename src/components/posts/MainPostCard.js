@@ -4,7 +4,6 @@ import { FaCommentAlt } from "react-icons/fa";
 import Moment from "react-moment";
 
 export const MainPostCard = ({ posts, index }) => {
-  let mx_title = "";
   let post;
   if (posts) {
     post = posts[index];

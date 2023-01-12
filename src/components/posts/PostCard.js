@@ -10,7 +10,7 @@ export const PostCard = ({ story }) => {
   // }
   const item = countries.find((x) => x.name === story?.country);
   return (
-    <div className="w-full bg-white md:h-[250px] mb-3 pb-3">
+    <div className="w-full bg-white  mb-3 pb-5 ">
       <img
         src={story.images[0]}
         alt=""
@@ -21,7 +21,7 @@ export const PostCard = ({ story }) => {
         alt="flag"
         className="w-[20px] max-h-5 absolute top-0"
       />
-      <div className="px-2 flex flex-col justify-between overflow-hidden  h-[100px]">
+      <div className="px-2 flex flex-col justify-between overflow-hidden">
         <Link to={`/post/${story.slug}`}>
           <h5
             className="font-semibold text-md line-clamp-3"
@@ -31,10 +31,10 @@ export const PostCard = ({ story }) => {
           </h5>
         </Link>
 
-        <div className="flex gap-2 max-w-sm  overflow-hidden items-center">
+        <div className="flex gap-2 max-w-sm mb-2 overflow-hidden items-center">
           By:<span className="text-gray-500 font-bold">{story.author}</span>
         </div>
-        <span className="bg-teal-700 w-fit px-3 rounded-md text-white">
+        <span className="text-sm text-teal-700">
           <Moment fromNow date={new Date(story.createdAt * 1)}></Moment>
         </span>
       </div>

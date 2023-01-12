@@ -1,5 +1,4 @@
 import {
-  arrayRemove,
   arrayUnion,
   collection,
   doc,
@@ -36,25 +35,5 @@ export const get_Comments = async (postId) => {
     return comments.docs.map((comment) => comment.data());
   } catch (error) {
     throw error;
-  }
-};
-
-export const likeComment = async (commentId, userId) => {
-  const commentRef = doc(db, "comments", commentId);
-  const comment = await getDoc(commentRef);
-  const userHasLinked = comment.data()["likes"].indexOf(userId);
-  const count = comment.data()["likesCount"];
-  if (userHasLinked === -1) {
-    await updateDoc(commentRef, {
-      likes: arrayUnion(userId),
-      likesCount: count + 1,
-    });
-    return true;
-  } else {
-    await updateDoc(commentRef, {
-      likes: arrayRemove(userId),
-      likesCount: count - 1,
-    });
-    return false;
   }
 };

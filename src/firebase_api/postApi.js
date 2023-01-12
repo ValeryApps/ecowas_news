@@ -104,9 +104,9 @@ export const likePost = async (postId, userId) => {
   const postRef = doc(db, "posts", postId);
   const post = await getDoc(postRef);
   // console.log(post.data());
-  const userHasLinked = post.data()["likes"].indexOf(userId);
+  const userHasLiked = post.data()["likes"].indexOf(userId);
   const count = post.data()["likesCount"];
-  if (userHasLinked === -1) {
+  if (userHasLiked === -1) {
     await updateDoc(postRef, {
       likes: arrayUnion(userId),
       likesCount: count + 1,

@@ -12,6 +12,8 @@ import { StoriesPerCategory } from "./pages/categories/StoriesPerCategory";
 import { EditPost } from "./pages/posts/EditPost";
 import { Country } from "./pages/countries/Country";
 import { AppFooter } from "./components/footer/AppFooter";
+import { ToastContainer } from "react-toast";
+
 function App() {
   const [visible, setVisible] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -30,6 +32,7 @@ function App() {
       />
 
       <div>
+        <ToastContainer position="bottom-right" delay={1} />
         <Routes>
           <Route element={<PrivateRoute />}>
             <Route path="/create-post/" element={<AddPost />} />

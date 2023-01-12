@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import RegisterInput from "../inputs/registerInput";
 import { PulseLoader } from "react-spinners";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { register_user } from "../../firebase_api/AuthApi";
 
 const RegisterForm = () => {
@@ -19,7 +19,7 @@ const RegisterForm = () => {
   };
 
   const [register, setRegister] = useState(userInfo);
-
+  const navigate = useNavigate();
   const { first_name, last_name, email, password } = register;
 
   const handleRegisterChange = (e) => {
@@ -37,6 +37,7 @@ const RegisterForm = () => {
       setLoading(true);
       await register_user(register);
       setLoading(false);
+      navigate("/");
     } catch (error) {
       if (error.message === "Firebase: Error (auth/email-already-in-use).");
       setError("Sorry, this email is already in taken!");

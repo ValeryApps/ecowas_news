@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IntroHeader } from "./IntroHeader";
 import "./appBar.css";
 import { AppDrawer } from "./AppDrawer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   IoReorderFourOutline,
   IoClose,
@@ -15,36 +15,35 @@ import { RightMenu } from "./RightMenu";
 import { useAuthStatus } from "../../hooks/useAuthStatus";
 import { getAuth } from "firebase/auth";
 import { countries } from "../../data/countries";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser, logoutUser } from "../../store/reducers/user";
 
 const navItems = [{ name: "Home", path: "/" }];
 
 export const AppHeader = ({ visible, setVisible, isVisible, setIsVisible }) => {
-  // const { user } = useSelector((state) => ({ ...state.auth }));
   const navigate = useNavigate();
-  // const [visible, setVisible] = useState(false);
-  // const [isVisible, setIsVisible] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { pathname } = useLocation();
-  console.log(pathname);
-  // const token = user?.token ? jwt_decode(user?.token) : "";
-  // const { isModerator } = token;
+  const { isLoggedIn } = useSelector((state) => ({ ...state.auth }));
   const [showCategories, setShowCategories] = useState(false);
+  const dispatch = useDispatch();
   let { loggedIn } = useAuthStatus();
   const auth = getAuth();
   const logout = async () => {
     await auth.signOut();
-    loggedIn = false;
+    dispatch(logoutUser());
     navigate("/");
   };
-  console.log(pathname.substring(pathname.lastIndexOf("/") + 1));
 
   const nation = countries.find(
     (x) => x.value === pathname.substring(pathname.lastIndexOf("/") + 1)
   );
-
+  useEffect(() => {
+    loggedIn ? dispatch(loginUser()) : dispatch(logoutUser());
+  }, [dispatch, loggedIn]);
   return (
     <>
-      <div className="top_header relative hidden md:block">
+      <div className="top_header relative hidden md:block ">
         <IntroHeader country={nation} />
         {showCategories && (
           <CategoriesMenu
@@ -54,9 +53,9 @@ export const AppHeader = ({ visible, setVisible, isVisible, setIsVisible }) => {
           />
         )}
       </div>
-      <nav className="w-full bg-teal-800 shadow  top-0 z-50">
+      <nav className="w-full bg-teal-800 shadow  top-0 z-50 p-3">
         <div className=" flex justify-between items-center  mx-4">
-          <div className="app_left z-[60]">
+          <div className="flex items-center text-white gap-3 z-[60]">
             {visible ? (
               <IoClose
                 size={30}
@@ -123,7 +122,7 @@ export const AppHeader = ({ visible, setVisible, isVisible, setIsVisible }) => {
               {/* <div>
                 <SearchComponent />
               </div> */}
-              {!loggedIn ? (
+              {!isLoggedIn ? (
                 <Link
                   className={`${
                     pathname === "/login"

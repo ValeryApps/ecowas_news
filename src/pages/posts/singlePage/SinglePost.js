@@ -1,5 +1,5 @@
 import { Layout } from "../../../components/layout/Layout";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { createMarkup } from "../../../helpers/parseHTML";
 import "../post.css";
 import "./singlePage.css";
@@ -17,29 +17,30 @@ import { fetch_post_by_slug, likePost } from "../../../firebase_api/postApi";
 import { getAuth } from "firebase/auth";
 import { SpinnerComponent } from "../../../components/SpinnerComponent";
 import Moment from "react-moment";
-import { fetchCommentsAsync } from "../../../store/reducers/comment";
-import { likeComment } from "../../../firebase_api/commentApi";
+import {
+  fetchCommentsAsync,
+  getCommentCount,
+} from "../../../store/reducers/comment";
 import { v4 as uuidv4 } from "uuid";
 import { addComment } from "../../../store/reducers/comment";
+import { useAuthStatus } from "../../../hooks/useAuthStatus";
 
 export const SinglePost = () => {
-  const [isComment, setIsComment] = useState(false);
   const [loading, setLoading] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
   const [post, setPost] = useState();
   const { posts } = useSelector((state) => ({ ...state.posts }));
   const [like, setLike] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
-  const [commentLike, setCommentLike] = useState(false);
-  const [commentLikeCount, setCommentLikeCount] = useState(0);
-  const [commentCount, setCommentCount] = useState(0);
-  const [text, setText] = useState("");
-  const { comments } = useSelector((state) => ({ ...state.comments }));
-  const dispatch = useDispatch();
-  // let myCommentId = "";
 
+  // const [commentCount, setCommentCount] = useState(0);
+  const [text, setText] = useState("");
+  const { comments, count } = useSelector((state) => ({ ...state.comments }));
+  const dispatch = useDispatch();
+  const { loggedInAsAdmin } = useAuthStatus();
   const { slug } = useParams();
   const { currentUser } = getAuth();
+  const navigate = useNavigate();
   const similarStories = posts?.filter(
     (x) => x.category === post?.category && x.slug !== post?.slug
   );
@@ -77,49 +78,58 @@ export const SinglePost = () => {
   }, [currentUser, post]);
 
   useEffect(() => {
-    setCommentCount(post?.commentsCount);
-  }, [setCommentCount, post]);
+    dispatch(getCommentCount(post?.id));
+  }, [dispatch, post]);
 
   const handleLikePost = async () => {
-    const isLiked = await likePost(post?.id, currentUser?.uid);
-    isLiked ? setLikeCount(likeCount + 1) : setLikeCount(likeCount - 1);
-    setLike(isLiked);
+    if (currentUser.uid) {
+      const isLiked = await likePost(post?.id, currentUser?.uid);
+      isLiked ? setLikeCount(likeCount + 1) : setLikeCount(likeCount - 1);
+      setLike(isLiked);
+    } else {
+      navigate("/login");
+    }
   };
   if (!post || loading) {
     return <SpinnerComponent />;
   }
-  const handleLikeComment = async (commentId) => {
-    const isCommentLike = await likeComment(commentId, currentUser?.uid);
-    setCommentLike(isCommentLike);
-    isCommentLike
-      ? setCommentLikeCount(commentLikeCount + 1)
-      : setCommentLikeCount(commentLikeCount - 1);
-  };
+  // const handleLikeComment = async (commentId) => {
+  //   const isCommentLike = await likeComment(commentId, currentUser?.uid);
+  //   setCommentLike(isCommentLike);
+  //   isCommentLike
+  //     ? setCommentLikeCount(commentLikeCount + 1)
+  //     : setCommentLikeCount(commentLikeCount - 1);
+  // };
 
   const submitComment = async (e) => {
     e.preventDefault();
-    const commentId = uuidv4();
-    try {
-      const comment = {
-        text,
-        commentId,
-        postId: post?.id,
-        commentedBy: currentUser?.uid,
-        likeCount: 0,
-        likes: [],
-        username: currentUser?.displayName,
-        createdAt: Date.now(),
-      };
-      setCommentLoading(true);
-      await create_comment(post?.id, comment, commentId);
-      setCommentCount(commentCount + 1);
-      dispatch(addComment(comment));
-      setCommentLoading(false);
+    if (currentUser === null) {
+      navigate("/login");
+      return;
+    } else {
+      const commentId = uuidv4();
+      try {
+        const comment = {
+          text,
+          commentId,
+          postId: post?.id,
+          commentedBy: currentUser?.uid,
+          likeCount: 0,
+          likes: [],
+          username: currentUser?.displayName,
+          createdAt: Date.now(),
+        };
+        setCommentLoading(true);
+        await create_comment(post?.id, comment, commentId);
+        dispatch(addComment(comment));
+        dispatch(getCommentCount(post?.id));
+        setCommentLoading(false);
 
-      setText("");
-    } catch (error) {
-      setCommentLoading(false);
-      throw error;
+        setText("");
+      } catch (error) {
+        setCommentLoading(false);
+        throw error;
+      }
     }
   };
   return (
@@ -177,7 +187,7 @@ export const SinglePost = () => {
               ) : (
                 <span>{likeCount} Like</span>
               )}
-              <div className="">{commentCount} comments</div>
+              <div className="">{count} comments</div>
             </div>
           </div>
           <div className="px-3 pb-5">
@@ -190,37 +200,23 @@ export const SinglePost = () => {
                   </div>
                 );
               })}
-            {!isComment && (
-              <button
-                className="bg-teal-900 text-white p-2 rounded-lg"
-                onClick={() => setIsComment((prev) => !prev)}
-              >
-                Add your comment
-              </button>
-            )}
-            {currentUser && isComment && (
-              <CreateComment
-                commentLoading={commentLoading}
-                setText={setText}
-                submitComment={submitComment}
-                text={text}
-              />
-            )}
-            {!currentUser && isComment && (
-              <>
-                <span className="text-red-700 font-semibold mr-3">
-                  You have to login before you comment
-                </span>
-                <Link to="/login">Login!</Link>
-              </>
-            )}
+
+            <CreateComment
+              commentLoading={commentLoading}
+              setText={setText}
+              submitComment={submitComment}
+              text={text}
+            />
           </div>
-          <div className=" flex gap-2 m-3">
-            <AiFillDelete className="text-red-700" />
-            <Link to={`/edit-post/${post.id}`}>
-              <FaRegEdit className="text-green-700" />
-            </Link>
-          </div>
+          {/* admin or author who owns this post can have access to this area or */}
+          {(loggedInAsAdmin || currentUser?.uid === post.userId) && (
+            <div className=" flex gap-2 m-3">
+              <AiFillDelete className="text-red-700" />
+              <Link to={`/edit-post/${post.id}`}>
+                <FaRegEdit className="text-green-700" />
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </Layout>

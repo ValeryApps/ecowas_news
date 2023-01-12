@@ -9,7 +9,7 @@ export default function LoginInput({ placeholder, bottom, ...props }) {
     query: "(min-width:850px)",
   });
   return (
-    <div className="input_wrap">
+    <div className="relative flex flex-col items-center w-full">
       {meta.touched && meta.error && !bottom && (
         <div
           className={
@@ -27,7 +27,9 @@ export default function LoginInput({ placeholder, bottom, ...props }) {
       )}
 
       <input
-        className={meta.touched && meta.error ? "input_error_border" : ""}
+        className={`${
+          meta.touched && meta.error ? "input_error_border" : ""
+        } leading-none border-2 w-full h-10 rounded-md text-lg pl-2 mb-1 text-gray-800`}
         type={field.type}
         name={field.name}
         placeholder={placeholder}

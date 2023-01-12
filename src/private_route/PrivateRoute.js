@@ -4,9 +4,17 @@ import { SpinnerComponent } from "../components/SpinnerComponent";
 import { useAuthStatus } from "../hooks/useAuthStatus";
 
 export const PrivateRoute = () => {
-  const { isLoading, loggedIn } = useAuthStatus();
+  const { isLoading, loggedInAsAuthor, loggedInAsAdmin } = useAuthStatus();
   if (isLoading) {
     return <SpinnerComponent />;
   }
-  return <div>{loggedIn ? <Outlet /> : <Navigate to="/login" />}</div>;
+  return (
+    <div>
+      {loggedInAsAuthor || loggedInAsAdmin ? (
+        <Outlet />
+      ) : (
+        <Navigate to="/home" />
+      )}
+    </div>
+  );
 };
