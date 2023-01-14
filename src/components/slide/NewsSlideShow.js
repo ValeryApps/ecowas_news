@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Zoom } from "react-slideshow-image";
 import "./slide.css";
 
 export const NewsSlideShow = ({ posts }) => {
-  const [postsWithImage, setPostsWithImage] = useState([]);
+  // const [postsWithImage, setPostsWithImage] = useState([]);
 
   const zoomOutProperties = {
     duration: 2000,
@@ -14,13 +14,13 @@ export const NewsSlideShow = ({ posts }) => {
     scale: 0.1,
     arrows: true,
   };
-  useEffect(() => {
-    posts?.forEach((post) => {
-      if (post.images.length > 0) {
-        setPostsWithImage((prev) => [...prev, post]);
-      }
-    });
-  }, [posts]);
+  // useEffect(() => {
+  //   posts?.forEach((post) => {
+  //     if (post.images.length > 0) {
+  //       setPostsWithImage((prev) => [...prev, post]);
+  //     }
+  //   });
+  // }, [posts]);
   const imagePosts = posts.filter((x) => x.images.length > 0);
   return (
     <div className="h-[21rem] flex min-w-full gap-3 ">

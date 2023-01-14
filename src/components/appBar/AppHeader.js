@@ -87,9 +87,9 @@ export const AppHeader = ({ visible, setVisible, isVisible, setIsVisible }) => {
                   to={path}
                   className={`${
                     path === pathname
-                      ? "text-[#05396d] bg-white rounded-[3px]"
+                      ? "text-[#05396d] font-bold bg-white rounded-[3px]"
                       : "text-white"
-                  } p-2`}
+                  } p-2 hover:text-teal-300`}
                 >
                   {name}
                 </Link>
@@ -102,9 +102,9 @@ export const AppHeader = ({ visible, setVisible, isVisible, setIsVisible }) => {
                   to={`/category/${link}`}
                   className={`${
                     pathname === `/category/${link}`
-                      ? "text-[#05396d] bg-white rounded-[3px]"
+                      ? "text-[#05396d] font-bold bg-white rounded-[3px]"
                       : "text-white"
-                  } p-2`}
+                  } p-2 hover:text-teal-300`}
                 >
                   {text}
                 </Link>

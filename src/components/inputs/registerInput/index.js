@@ -5,9 +5,9 @@ import "./registerInput.css";
 
 const RegisterInput = ({ placeholder, ...props }) => {
   const [field, meta] = useField(props);
-  const view539 = useMediaQuery({
-    query: "(min-width:539px)",
-  });
+  // const view539 = useMediaQuery({
+  //   query: "(min-width:539px)",
+  // });
 
   const view1170 = useMediaQuery({
     query: "(min-width:1170px)",

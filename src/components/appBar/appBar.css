@@ -2,7 +2,7 @@
 .drawer_out {
   position: absolute;
   width: 320px;
-  background-color: var(--bg-primary);
+  background-color: #fff;
   box-shadow: 2px 3px #ccc;
   height: 100vh;
   z-index: 10000000000000000;
@@ -23,7 +23,7 @@
 .drawer_in {
   position: absolute;
   width: 320px;
-  background-color: var(--bg-primary);
+  background-color: #fff;
   z-index: 100;
   height: 100vh;
   left: -320px;
