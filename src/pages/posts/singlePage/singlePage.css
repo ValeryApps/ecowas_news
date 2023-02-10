@@ -4,7 +4,7 @@ p {
     font-family: Georgia, 'Times New Roman', Times, serif;
     color: #3b3c3d;
 }
-
+  
 .story_text p:first-of-type {
     font-weight: 700;
     font-size: 15px;

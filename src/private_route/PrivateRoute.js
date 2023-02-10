@@ -10,11 +10,7 @@ export const PrivateRoute = () => {
   }
   return (
     <div>
-      {loggedInAsAuthor || loggedInAsAdmin ? (
-        <Outlet />
-      ) : (
-        <Navigate to="/home" />
-      )}
+      {loggedInAsAuthor || loggedInAsAdmin ? <Outlet /> : <Navigate to="/" />}
     </div>
   );
 };

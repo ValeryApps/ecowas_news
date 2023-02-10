@@ -13,4 +13,6 @@ export const categories = [
   { text: "Health", icon: "/images/health.png", link: "health" },
   { text: "Science", icon: "/images/science.jpg", link: "science" },
   { text: "Society", icon: "/images/society.png", link: "society" },
+  { text: "Editorial", icon: "/images/society.png", link: "editorial" },
+  { text: "Commentary", icon: "/images/society.png", link: "commentary" },
 ];

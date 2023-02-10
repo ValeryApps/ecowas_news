@@ -24,6 +24,8 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { addComment } from "../../../store/reducers/comment";
 import { useAuthStatus } from "../../../hooks/useAuthStatus";
+import { capitalize } from "../../../helpers/capitalize";
+import { BsClock } from "react-icons/bs";
 
 export const SinglePost = () => {
   const [loading, setLoading] = useState(false);
@@ -154,17 +156,24 @@ export const SinglePost = () => {
           </div>
           <div className="pb-6">
             <img src={post?.images[0]} alt={post?.title} className="w-full" />
-            <div className="story_meta px-3">
+            <div className="flex gap-6 px-3 bg-white shadow-md py-2 w-fit ml-2 items-center rounded-md">
               <span>
-                Country: {post?.country} Category: {post?.category}
+                Country: <strong> {capitalize(post?.country)}</strong>
               </span>
-              <Moment
-                fromNow
-                date={post?.createdAt * 1}
-                className="ml-3"
-              ></Moment>
+              <span>
+                {" "}
+                Category: <strong>{capitalize(post?.category)}</strong>
+              </span>
+              <span className="flex items-center gap-1">
+                <BsClock />
+                <Moment
+                  fromNow
+                  date={post?.createdAt * 1}
+                  className=" font-bold"
+                ></Moment>
+              </span>
             </div>
-            <div className="story_text px-3 text-gray-700">
+            <div className="mt-5 [p:first-of-type:font-bold] px-3 text-gray-700">
               <div
                 dangerouslySetInnerHTML={createMarkup(post?.description)}
               ></div>

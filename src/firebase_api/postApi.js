@@ -10,11 +10,12 @@ import {
   setDoc,
   arrayUnion,
   arrayRemove,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 
 export const fetch_Posts = async () => {
-  const postsRef = await collection(db, "posts");
+  const postsRef = collection(db, "posts");
 
   const postsQuery = query(postsRef, orderBy("createdAt", "desc"));
 
@@ -46,17 +47,17 @@ export const fetch_post_by_slug = async (slug) => {
   }
 };
 
-export const add_post = async (post, postId) => {
+export const add_post = async (post) => {
   try {
-    await setDoc(doc(db, "posts", postId), post);
+    await setDoc(doc(db, "posts", post.id), post);
   } catch (error) {
     throw error;
   }
 };
 
-export const update_post = async (post, data) => {
+export const update_post = async (id, data) => {
   try {
-    const postRef = doc(db, "posts", post.id);
+    const postRef = doc(db, "posts", id);
     await updateDoc(postRef, data);
   } catch (error) {
     throw error;
@@ -103,7 +104,6 @@ export const fetch_Posts_per_category = async (category) => {
 export const likePost = async (postId, userId) => {
   const postRef = doc(db, "posts", postId);
   const post = await getDoc(postRef);
-  // console.log(post.data());
   const userHasLiked = post.data()["likes"].indexOf(userId);
   const count = post.data()["likesCount"];
   if (userHasLiked === -1) {
@@ -119,4 +119,21 @@ export const likePost = async (postId, userId) => {
     });
     return false;
   }
+};
+export const delete_post = async (postId) => {
+  let response = "";
+  const postRef = doc(db, "posts", postId);
+  const postCommentsRef = collection(db, "comments");
+  const postCommentQuery = query(
+    postCommentsRef,
+    where("postId", "==", postId)
+  );
+  const commentsSnap = await getDocs(postCommentQuery);
+  commentsSnap.docs.forEach(async (comment) => {
+    const comRef = doc(db, "comments", comment.id);
+    await deleteDoc(comRef);
+  });
+  await deleteDoc(postRef);
+  response = `Post with id: ${postId} has been deleted`;
+  return response;
 };

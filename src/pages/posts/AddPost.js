@@ -1,64 +1,59 @@
-import { useState } from "react";
-import { convertToHTML } from "draft-convert";
-import { EditorState } from "draft-js";
+import { Form, Formik } from "formik";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet";
-import { PulseLoader } from "react-spinners";
-import DraftEditor from "../../components/editor/DraftEditor";
-import ImagePreview from "../../components/inputs/ImagePreview";
+import { Input, Select } from "../../components/inputs/Input";
+import { Layout } from "../../components/layout/Layout";
 import { categories } from "../../data/categories";
 import { countries } from "../../data/countries";
-import { getAuth } from "firebase/auth";
-import "../../components/postpopup/postpopup.css";
-import "./post.css";
-import { v4 as uuidv4 } from "uuid";
+import * as Yup from "yup";
+import { EditorState } from "draft-js";
+import { convertToHTML } from "draft-convert";
+import { v4 as uuid } from "uuid";
+import { DraftEditor } from "../../components/editor/DraftEditor";
+import { add_post } from "../../firebase_api/postApi";
 import { storeImage } from "../../firebase_api/uploadImage";
+import { ImagePreview } from "../../components/images/ImagePreview";
 import { useDispatch } from "react-redux";
 import { createPost } from "../../store/reducers/post";
-import { add_post } from "../../firebase_api/postApi";
+import { toast } from "react-toast";
 
 const initialValues = {
+  title: "",
   description: "",
   type: "",
   author: "",
   externUrl: "",
   category: "",
   country: "",
+  language: "English",
 };
 export const AddPost = () => {
-  const [formData, setFormData] = useState(initialValues);
+  const [postData, setPostData] = useState(initialValues);
   const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [fileArray, setFileArray] = useState([]);
-  const auth = getAuth();
+  const [filesArray, setFilesArray] = useState([]);
+  const {
+    title,
+    description,
+    type,
+    author,
+    externUrl,
+    category,
+    country,
+    language,
+  } = postData;
   const dispatch = useDispatch();
-
-  const handleOnchange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
-  );
-  const handleEditorChange = (state) => {
-    setEditorState(state);
-    convertContentToHTML();
-  };
   let imageFiles = [];
-  // const formValidation = Yup.object({
-  //   title: Yup.string().required("The title is required"),
-  //   description: Yup.string().required(),
-  //   type: Yup.string().required(),
-  //   author: Yup.string().required(),
-  //   externUrl: Yup.string().required(),
-  //   category: Yup.string().required(),
-  //   country: Yup.string().required(),
-  // });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setPostData({ ...postData, [name]: value });
+  };
+
   const handleImages = (e) => {
     let files = Array.from(e.target.files);
     files.forEach((img) => {
       imageFiles.push(img);
-      setFileArray(imageFiles);
+      setFilesArray(imageFiles);
       const reader = new FileReader();
       reader.readAsDataURL(img);
       reader.onload = (ev) => {
@@ -66,198 +61,191 @@ export const AddPost = () => {
       };
     });
   };
+  const [editorState, SetEditorState] = useState(() =>
+    EditorState.createEmpty()
+  );
+  const handleEditorChange = (state) => {
+    SetEditorState(state);
+    convertContentToHTML();
+  };
 
   const convertContentToHTML = () => {
     let currentContentAsHTML = convertToHTML(editorState.getCurrentContent());
-    setFormData((prev) => ({ ...prev, description: currentContentAsHTML }));
+    setPostData((prev) => ({ ...prev, description: currentContentAsHTML }));
   };
-  const resetForm = () => {
-    setEditorState(null);
-    setFormData({});
-    setImages([]);
-  };
-  const handleSubmit = async (e) => {
+  const validate = Yup.object({
+    title: Yup.string().required(),
+    type: Yup.string().required(),
+    author: Yup.string().required(),
+    category: Yup.string().required(),
+    country: Yup.string().required(),
+  });
+  const submitPost = async () => {
     let imageUrls;
-    e.preventDefault();
+    const id = uuid();
     try {
-      setLoading(true);
-      const slug = `${formData.title
+      const slug = `${postData.title
+        .replaceAll(" ", "-")
         .replaceAll("/", "")
-        .replaceAll("?", "")
-        .replaceAll(" ", "-")}-${Date.now()}`;
-      if (fileArray.length > 0) {
+        .replaceAll("?", "")}-${Date.now()}`;
+      if (filesArray.length > 0) {
         imageUrls = await Promise.all(
-          [...fileArray].map((file) => {
-            const path = `Posts/images/${file?.name}`;
+          [...filesArray].map((file) => {
+            const path = `Posts/images/${id}/${file?.name}`;
             return storeImage(file, path);
           })
         ).catch((err) => {
-          setLoading(false);
-          console.log("Could not upload image");
+          console.log("Could not upload images");
           return;
         });
-
-        let post = {
-          ...formData,
-          id: uuidv4(),
+        const post = {
+          ...postData,
+          slug,
+          id,
           images: imageUrls,
-          slug,
           likes: [],
+          comments: [],
           likesCount: 0,
           commentsCount: 0,
-          comments: [],
-          userHasLiked: false,
-          userId: auth.currentUser.uid,
           createdAt: Date.now().toString(),
         };
-
-        await add_post(post, post.id);
+        await add_post(post);
         dispatch(createPost(post));
-        setLoading(false);
-        resetForm();
       } else {
-        let post = {
-          ...formData,
-          id: uuidv4(),
+        const post = {
+          ...postData,
           slug,
+          images: [],
+          id,
           likes: [],
+          comments: [],
           likesCount: 0,
           commentsCount: 0,
-          comments: [],
-          userId: auth.currentUser.uid,
           createdAt: Date.now().toString(),
         };
-        await add_post(post, post.id);
+        await add_post(post);
         dispatch(createPost(post));
-        setLoading(false);
-        resetForm();
       }
+      toast.success("Post Created successfully");
     } catch (error) {
-      setLoading(false);
-      console.log(error.message);
+      toast.error(error.message);
     }
   };
-
   return (
-    <div className="form">
+    <Layout>
       <Helmet>
-        <title>Create New Post</title>
+        <title>Create Post - Glory Info</title>
       </Helmet>
-      <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
-        Create a new Post{" "}
-      </h1>
-      {/* <Formik
-        enableReinitialize
-        initialValues={initialPostValue}
-        validationSchema={validationSchema}
-        onSubmit={handlePostSubmit}
-      > */}
-      {/* {(formik) => ( */}
-      <form onSubmit={handleSubmit}>
-        <div className="md:flex gap-3">
-          <div className="w-full">
-            <input
-              className="w-full py-2 border-[0.5px] border-slate-200 rounded-md mb-2 px-3"
-              name="title"
-              onChange={handleOnchange}
-              placeholder="Post Title"
-            />
-          </div>
-
-          <div className="w-full">
-            <select
-              className="w-full py-2 border-[0.5px] border-slate-200 rounded-md mb-2 px-3"
-              name="type"
-              // value={type}
-              onChange={handleOnchange}
-            >
-              <option value="">What type?</option>
-              <option value="video">video</option>
-              <option value="text">text</option>
-              <option value="images">images</option>
-            </select>
-          </div>
-        </div>
-        <div className=" md:flex gap-3">
-          <div className="w-full">
-            <input
-              className="w-full py-2 border-[0.5px] border-slate-200 rounded-md mb-2 px-3"
-              // value={externUrl}
-              name="externUrl"
-              onChange={handleOnchange}
-              placeholder="Extern Url"
-            />
-          </div>
-          <div className="w-full">
-            <input
-              className="w-full py-2 border-[0.5px] border-slate-200 rounded-md mb-2 px-3"
-              // value={author}
-              name="author"
-              onChange={handleOnchange}
-              placeholder="Author"
-            />
-          </div>
-        </div>
-        <div className=" md:flex gap-3">
-          <div className="w-full">
-            <select
-              className="w-full py-2 border-[0.5px] border-slate-200 rounded-md mb-2 px-3"
-              name="category"
-              // value={category}
-              onChange={handleOnchange}
-            >
-              <option value="">Choose a category</option>
-              {categories.map(({ text, link }) => (
-                <option key={text} value={link}>
-                  {text}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="w-full">
-            <select
-              className="w-full py-2 border-[0.5px] border-slate-200 rounded-md mb-2 px-3"
-              name="country"
-              // value={country}
-              onChange={handleOnchange}
-            >
-              <option value="">Choose a Country</option>
-              {countries.map(({ name, value }) => (
-                <option key={name} value={value}>
-                  {name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="editor">
-          <DraftEditor
-            editorState={editorState}
-            handleEditorChange={handleEditorChange}
-          />
-        </div>
-        {/* <input type="file" multiple name="imageList" /> */}
-        <div className="preview">
-          <ImagePreview
-            images={images}
-            setImages={setImages}
-            handleImages={handleImages}
-            //   setShowPrev={setShowPrev}
-            //   setError={setError}
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-blue-900 text-center py-2 rounded-md mt-5 text-white uppercase"
+      <div className="w-[80%] pb-24 px-5 shadow-md bg-white mb-5 mx-auto rounded-md">
+        <h1 className="text-center py-5 text-3xl font-bold text-teal-700">
+          Add New Post
+        </h1>
+        <Formik
+          enableReinitialize
+          validationSchema={validate}
+          initialValues={{
+            title,
+            description,
+            type,
+            author,
+            externUrl,
+            category,
+            country,
+            language,
+          }}
+          onSubmit={submitPost}
         >
-          {loading ? "Submitting post" : "Submit"}
-          {loading && <PulseLoader color="white" />}
-        </button>
-      </form>
-      {/* )}
-      </Formik> */}
-    </div>
+          {({ isValid, isSubmitting }) => (
+            <Form className="w-full flex flex-col gap-4">
+              <div className="md:flex gap-3">
+                <Input
+                  type="text"
+                  name="title"
+                  placeholder="Enter Story Title"
+                  onChange={handleChange}
+                  value={title}
+                />
+                <Select
+                  onChange={handleChange}
+                  name="category"
+                  value={category}
+                >
+                  <option value="">Select a category</option>
+                  {categories.map((cat) => (
+                    <option key={cat.text} value={cat.link}>
+                      {cat.text}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              <div className="md:flex gap-3">
+                <Input
+                  type="text"
+                  name="externUrl"
+                  placeholder="Enter Story Url"
+                  onChange={handleChange}
+                  value={externUrl}
+                />
+                <Input
+                  type="text"
+                  name="author"
+                  placeholder="Enter Story Author"
+                  onChange={handleChange}
+                  value={author}
+                />
+              </div>
+              <div className="md:flex gap-3">
+                <Select onChange={handleChange} name="country" value={country}>
+                  <option value="">Select a country</option>
+                  {countries.map((country) => (
+                    <option key={country.name} value={country.value}>
+                      {country.name}
+                    </option>
+                  ))}
+                </Select>
+                <Select onChange={handleChange} name="type" value={type}>
+                  <option value="">Select a type</option>
+                  <option value="video">Video</option>
+                  <option value="text">Text</option>
+                  <option value="images">Images</option>
+                </Select>
+                <Select
+                  onChange={handleChange}
+                  name="language"
+                  value={language}
+                >
+                  <option value="English">English</option>
+                  <option value="French">French</option>
+                </Select>
+              </div>
+              <div>
+                <DraftEditor
+                  editorState={editorState}
+                  onEditorStateChange={handleEditorChange}
+                />
+              </div>
+              <div>
+                <ImagePreview
+                  images={images}
+                  setImages={setImages}
+                  handleImage={handleImages}
+                />
+              </div>
+              <button
+                type="submit"
+                className={`${
+                  !isValid || isSubmitting
+                    ? "bg-gray-400 text-black cursor-not-allowed"
+                    : "bg-teal-800 text-white"
+                } w-full text-center py-2 rounded-md mt-5`}
+                disabled={!isValid || isSubmitting}
+              >
+                {isSubmitting ? "Creating post..." : "Create Post"}
+              </button>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </Layout>
   );
 };

@@ -1,34 +1,34 @@
 import { Route, Routes } from "react-router";
 import { Home } from "./pages/Home";
-import { Posts } from "./pages/posts/Posts";
-import LoginPage from "./pages/auth/LoginPage";
-import { RegisterPage } from "./pages/auth/RegisterPage";
+import { AppHeader } from "./components/appbar/AppHeader";
 import { PrivateRoute } from "./private_route/PrivateRoute";
-import { AppHeader } from "./components/appBar/AppHeader";
-import { useState } from "react";
 import { AddPost } from "./pages/posts/AddPost";
 import { SinglePost } from "./pages/posts/singlePage/SinglePost";
-import { StoriesPerCategory } from "./pages/categories/StoriesPerCategory";
 import { EditPost } from "./pages/posts/EditPost";
-import { Country } from "./pages/countries/Country";
 import { AppFooter } from "./components/footer/AppFooter";
-import { ToastContainer } from "react-toast";
+import { ToastContainer } from "react-toastify";
+import { useCycle } from "framer-motion";
+import { PostsPerCountry } from "./pages/posts/PostsPerCountry";
+import { PostsPerCategory } from "./pages/posts/PostsPerCategory";
+import { SignIn } from "./pages/auth/SignIn";
+import { SignUp } from "./pages/auth/SignUp";
+import { Posts } from "./admin/posts/Posts";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  const [visible, setVisible] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [openCountries, setOpenCountries] = useCycle(false, true);
+  const [openCategories, setOpenCategories] = useCycle(false, true);
 
   return (
     <>
-      {(visible || isVisible) && (
-        <div className="top-0 bottom-0 left-0 right-0 bg-black opacity-75 h-full flex justify-center items-center fixed z-[60]"></div>
+      {(openCountries || openCategories) && (
+        <div className="top-0 bottom-0 right-0 left-0 bg-black opacity-80 h-full flex justify-center items-center fixed z-50"></div>
       )}
-
       <AppHeader
-        visible={visible}
-        setVisible={setVisible}
-        isVisible={isVisible}
-        setIsVisible={setIsVisible}
+        openCountries={openCountries}
+        setOpenCountries={setOpenCountries}
+        openCategories={openCategories}
+        setOpenCategories={setOpenCategories}
       />
 
       <div>
@@ -36,17 +36,18 @@ function App() {
         <Routes>
           <Route element={<PrivateRoute />}>
             <Route path="/create-post/" element={<AddPost />} />
-            <Route path="/edit-post/:id" element={<EditPost />} />
+            <Route path="/edit-post/:postId" element={<EditPost />} />
+            <Route path="/posts" element={<Posts />} />
           </Route>
           <Route path="/" element={<Home />} />
-          <Route path="/posts" element={<Posts />} />
           {/* <Route path="/about" element={<About />} /> */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<SignIn />} />
+          <Route path="/register" element={<SignUp />} />
 
+          <Route path="/admin/posts" element={<Posts />} />
           <Route path="/post/:slug" element={<SinglePost />} />
-          <Route path="/category/:link" element={<StoriesPerCategory />} />
-          <Route path="/country/:country" element={<Country />} />
+          <Route path="/countries/:country" element={<PostsPerCountry />} />
+          <Route path="/categories/:category" element={<PostsPerCategory />} />
           {/* <Route path="/contact" element={<Contact />} />  */}
           {/* 
          

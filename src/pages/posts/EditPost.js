@@ -1,49 +1,73 @@
-import { useEffect, useState } from "react";
-import { convertToHTML } from "draft-convert";
-import { createMarkup } from "../../helpers/parseHTML";
-import { EditorState } from "draft-js";
+import { Form, Formik } from "formik";
+import React from "react";
+import { useState } from "react";
 import { Helmet } from "react-helmet";
-import { PulseLoader } from "react-spinners";
-import DraftEditor from "../../components/editor/DraftEditor";
-import ImagePreview from "../../components/inputs/ImagePreview";
+import * as Yup from "yup";
+import { DraftEditor } from "../../components/editor/DraftEditor";
+import { Input, Select } from "../../components/inputs/Input";
 import { categories } from "../../data/categories";
 import { countries } from "../../data/countries";
-import "../../components/postpopup/postpopup.css";
-import "./post.css";
+import { convertToHTML } from "draft-convert";
+import { EditorState } from "draft-js";
+import { fetch_post_by_id, update_post } from "../../firebase_api/postApi";
+import { v4 as uuid } from "uuid";
+import { toast } from "react-toastify";
+import { BarLoader } from "react-spinners";
+import { ImagePreview } from "../../components/images/ImagePreview";
 import { storeImage } from "../../firebase_api/uploadImage";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router";
-import { fetch_post_by_id, update_post } from "../../firebase_api/postApi";
 import { updatePost } from "../../store/reducers/post";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { createMarkup } from "../../helpers/parseHTML";
 
 export const EditPost = () => {
   const { posts } = useSelector((state) => ({ ...state.posts }));
-  const dispatch = useDispatch();
-  const { id } = useParams();
-  const story = posts?.find((x) => x.id === id);
-  const [formData, setFormData] = useState(story);
-  const navigate = useNavigate();
-
+  const { postId } = useParams();
+  const data = posts.find((x) => x.id === postId);
+  const [postData, setPostData] = useState(data ?? {});
   const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [fileArray, setFileArray] = useState([]);
+  const dispatch = useDispatch();
+  const {
+    title,
+    description,
+    type,
+    author,
+    externUrl,
+    category,
+    country,
+    language,
+  } = postData;
 
-  const handleOnchange = (e) => {
+  const handleOnChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setPostData({ ...postData, [name]: value });
   };
-
-  const [editorState, setEditorState] = useState(() =>
+  const [editorState, SetEditorState] = useState(() =>
     EditorState.createEmpty()
   );
   const handleEditorChange = (state) => {
-    setEditorState(state);
+    SetEditorState(state);
     convertContentToHTML();
   };
+
+  const convertContentToHTML = () => {
+    let currentContentAsHTML = convertToHTML(editorState.getCurrentContent());
+    setPostData((prev) => ({ ...prev, description: currentContentAsHTML }));
+  };
+  const validationSchema = Yup.object({
+    title: Yup.string().required(),
+    type: Yup.string().required(),
+    author: Yup.string().required(),
+    category: Yup.string().required(),
+    country: Yup.string().required(),
+  });
   let imageFiles = [];
 
   const handleImages = (e) => {
     let files = Array.from(e.target.files);
+
     files.forEach((img) => {
       imageFiles.push(img);
       setFileArray(imageFiles);
@@ -55,16 +79,12 @@ export const EditPost = () => {
     });
   };
 
-  const resetForm = () => {
-    setFormData({});
-    setEditorState("");
-  };
-
   const handleSubmit = async (e) => {
     let imageUrls;
-    e.preventDefault();
     try {
-      setLoading(true);
+      const slug = `${postData.title
+        .replace(/[^a-zA-Z0-9À-ž\s]/gi, "")
+        .replaceAll(" ", "-")}-${Date.now()}`;
       if (fileArray.length > 0) {
         imageUrls = await Promise.all(
           [...fileArray].map((file) => {
@@ -72,177 +92,161 @@ export const EditPost = () => {
             return storeImage(file, path);
           })
         ).catch((err) => {
-          setLoading(false);
-          console.log("Could not upload image");
+          toast.error("Could not upload image");
           return;
         });
-        const post = {
-          ...formData,
+
+        let post = {
+          ...postData,
           images: imageUrls,
-          slug: formData.title.replaceAll(" ", "-"),
+          createdAt: Date.now().toString(),
         };
-        await update_post(story, post);
+        await update_post(postId, post);
         dispatch(updatePost(post));
+        toast.success("Post successfully updated");
       } else {
-        const post = {
-          ...formData,
-          slug: formData.title.replaceAll(" ", "-"),
+        let post = {
+          ...postData,
+          createdAt: Date.now().toString(),
         };
-        await update_post(story, post);
+        await update_post(postId, post);
         dispatch(updatePost(post));
+        toast.success("Post successfully updated");
       }
-      setLoading(false);
-      resetForm();
-      navigate("/");
     } catch (error) {
-      setLoading(false);
       console.log(error.message);
     }
   };
-  const convertContentToHTML = () => {
-    let currentContentAsHTML = convertToHTML(editorState.getCurrentContent());
-    setFormData((prev) => ({ ...prev, description: currentContentAsHTML }));
-  };
+
   useEffect(() => {
-    const fetchPost = async () => {
-      if (!formData) {
-        const data = await fetch_post_by_id(id);
-        setFormData(data);
-      }
-    };
-    fetchPost();
-  }, [formData, setFormData, id]);
+    if (!data) {
+      const getPostById = async () => {
+        const api_data = await fetch_post_by_id(postId);
+        // console.log(api_data);
+        setPostData(api_data);
+      };
+      getPostById();
+    }
+  }, [postId, data]);
 
   return (
-    <div className="form">
-      <Helmet>
-        <title>Edit Post</title>
-      </Helmet>
-      <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Edit Post </h1>
-      {/* <Formik
-        enableReinitialize
-        initialValues={initialPostValue}
+    <div className="w-[80%] pb-24 px-5 shadow-md bg-white mb-5 mx-auto rounded-md">
+      <Helmet title="Create a new post"></Helmet>
+      <h1 className="text-center mb-5 text-xl font-bold">Edit a new post</h1>
+      <Formik
+        initialValues={{
+          title,
+          description,
+          type,
+          author,
+          externUrl,
+          category,
+          country,
+          language,
+        }}
         validationSchema={validationSchema}
-        onSubmit={handlePostSubmit}
-      > */}
-      {/* {(formik) => ( */}
-      {story ? (
-        <form onSubmit={handleSubmit}>
-          <div className="md:flex gap-3">
-            <div className="w-full">
-              <input
-                className="w-full py-2 border-[0.5px] border-slate-200 rounded-md mb-2 px-3"
-                value={formData ? formData?.title : ""}
-                name="title"
-                onChange={handleOnchange}
-                placeholder="Post Title"
-              />
-            </div>
-
-            <div className="w-full">
-              <select
-                className="w-full py-2 border-[0.5px] border-slate-200 rounded-md mb-2 px-3"
-                name="type"
-                value={formData?.type}
-                onChange={handleOnchange}
+        enableReinitialize
+        onSubmit={handleSubmit}
+      >
+        {({ isSubmitting, isValid, errors, touched }) => {
+          console.log(touched);
+          return (
+            <Form className="w-full flex flex-col gap-4">
+              <div className="md:flex gap-3">
+                <Input
+                  type="text"
+                  name="title"
+                  placeholder="Enter Story Title"
+                  onChange={handleOnChange}
+                  value={title}
+                />
+                <Select
+                  onChange={handleOnChange}
+                  name="category"
+                  value={category}
+                >
+                  <option value="">Select a category</option>
+                  {categories.map((cat) => (
+                    <option key={cat.text} value={cat.link}>
+                      {cat.text}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              <div className="md:flex gap-3">
+                <Input
+                  type="text"
+                  name="externUrl"
+                  placeholder="Enter Story externUrl"
+                  onChange={handleOnChange}
+                  value={externUrl}
+                />
+                <Input
+                  type="text"
+                  name="author"
+                  placeholder="Enter Story Author"
+                  onChange={handleOnChange}
+                  value={author}
+                />
+              </div>
+              <div className="md:flex gap-3">
+                <Select
+                  onChange={handleOnChange}
+                  name="country"
+                  value={country}
+                >
+                  <option value="">Select a country</option>
+                  {countries.map((count) => (
+                    <option key={count.name} value={count.value}>
+                      {count.name}
+                    </option>
+                  ))}
+                </Select>
+                <Select onChange={handleOnChange} name="type" value={type}>
+                  <option value="">Select a type</option>
+                  <option value="video">Video</option>
+                  <option value="text">Text</option>
+                  <option value="images">Images</option>
+                </Select>
+              </div>
+              <div dangerouslySetInnerHTML={createMarkup(description)}></div>
+              <div>
+                <DraftEditor
+                  editorState={editorState}
+                  onEditorStateChange={handleEditorChange}
+                />
+                <img src={data?.images[0]} alt="" />
+                <div className="preview">
+                  <ImagePreview
+                    images={images}
+                    setImages={setImages}
+                    handleImages={handleImages}
+                  />
+                </div>
+              </div>
+              <button
+                className={`${
+                  !isValid || isSubmitting
+                    ? "bg-gray-400 text-black cursor-not-allowed"
+                    : "bg-teal-800 text-white"
+                } w-full  text-center py-2 rounded-md mt-5 `}
+                type="submit"
+                disabled={!isValid || isSubmitting}
               >
-                <option value="">What type?</option>
-                <option value="video">video</option>
-                <option value="text">text</option>
-                <option value="images">images</option>
-              </select>
-            </div>
-          </div>
-          <div className=" md:flex gap-3">
-            <div className="w-full">
-              <input
-                className="w-full py-2 border-[0.5px] border-slate-200 rounded-md mb-2 px-3"
-                value={formData ? formData?.externUrl : ""}
-                name="externUrl"
-                onChange={handleOnchange}
-                placeholder="Extern Url"
-              />
-            </div>
-            <div className="w-full">
-              <input
-                className="w-full py-2 border-[0.5px] border-slate-200 rounded-md mb-2 px-3"
-                value={formData ? formData?.author : ""}
-                name="author"
-                onChange={handleOnchange}
-                placeholder="Author"
-              />
-            </div>
-          </div>
-          <div className=" md:flex gap-3">
-            <div className="w-full">
-              <select
-                className="w-full py-2 border-[0.5px] border-slate-200 rounded-md mb-2 px-3"
-                name="category"
-                value={formData ? formData?.category : ""}
-                onChange={handleOnchange}
-              >
-                <option value="">Choose a category</option>
-                {categories.map(({ text, link }) => (
-                  <option key={text} value={link}>
-                    {text}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="w-full">
-              <select
-                className="w-full py-2 border-[0.5px] border-slate-200 rounded-md mb-2 px-3"
-                name="country"
-                value={formData?.country}
-                onChange={handleOnchange}
-              >
-                <option value="">Choose a Country</option>
-                {countries.map(({ name, value }) => (
-                  <option key={name} value={value}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="story_text px-3">
-            <div
-              dangerouslySetInnerHTML={createMarkup(story.description)}
-            ></div>
-          </div>
-          <div className="editor">
-            <DraftEditor
-              editorState={editorState}
-              handleEditorChange={handleEditorChange}
-            />
-          </div>
-          {/* <input type="file" multiple name="imageList" /> */}
-          <div className="preview">
-            <ImagePreview
-              images={images}
-              setImages={setImages}
-              handleImages={handleImages}
-              //   setShowPrev={setShowPrev}
-              //   setError={setError}
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-900 text-center py-2 rounded-md mt-5 text-white uppercase"
-          >
-            {loading ? "Submitting post" : "Submit"}
-            {loading && <PulseLoader color="white" />}
-          </button>
-        </form>
-      ) : (
-        <div className="top-0 bottom-0 left-0 right-0 flex justify-center items-center">
-          <h1>Post not found</h1>
-        </div>
-      )}
-
-      {/* )}
-      </Formik> */}
+                {isSubmitting ? (
+                  <div className="flex items-center justify-center gap-2 text-sm">
+                    Editing <BarLoader color="#36d7b7" width={50} />
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center gap-3">
+                    submit
+                  </div>
+                )}
+              </button>
+            </Form>
+          );
+        }}
+      </Formik>
     </div>
   );
 };
