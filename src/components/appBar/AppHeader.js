@@ -49,7 +49,51 @@ export const AppHeader = ({
                   : "text-white hover:text-teal-300 "
               } font-bold py-2 px-3 `}
             >
+<<<<<<< HEAD
               Home
+=======
+              <div className="E24_icon">
+                <img src="../../../180.png" alt="" />
+              </div>
+            </h1>
+          </div>
+          <div className=" hidden md:flex">
+            <div>
+              {navItems.map(({ name, path }) => (
+                <Link
+                  key={name}
+                  to={path}
+                  className={`${
+                    path === pathname
+                      ? "text-[#05396d] font-bold bg-white rounded-[3px]"
+                      : "text-white"
+                  } p-2 hover:text-teal-300`}
+                >
+                  {name}
+                </Link>
+              ))}
+            </div>
+            <div>
+              {categories.slice(0, 3).map(({ text, link }) => (
+                <Link
+                  key={text}
+                  to={`/category/${link}`}
+                  className={`${
+                    pathname === `/category/${link}`
+                      ? "text-[#05396d] font-bold bg-white rounded-[3px]"
+                      : "text-white"
+                  } p-2 hover:text-teal-300`}
+                >
+                  {text}
+                </Link>
+              ))}
+            </div>
+            <Link to="#" onClick={() => setShowCategories((prev) => !prev)}>
+              <div className=" text-white flex items-center gap-1">
+                More stories
+                <IoEllipsisHorizontal />
+              </div>
+>>>>>>> d4bd699cf3da6bd354e31d1d77c4943c1be02b39
             </Link>
             {categories.slice(0, 3).map(({ text, icon, link }) => (
               <Link
