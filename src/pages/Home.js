@@ -19,8 +19,11 @@ export const Home = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [storyTitles, setStoryTitles] = useState([]);
-  const { language } = useSelector((state) => ({ ...state.lang }));
-  const { i18n, t } = useTranslation();
+  const userLanguage = navigator.language;
+  console.log(userLanguage);
+  const { language, changeLang } = useSelector((state) => ({ ...state.lang }));
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     setStoryTitles(posts?.map((post) => post.title));
@@ -29,12 +32,24 @@ export const Home = () => {
   useEffect(() => {
     setLoading(true);
     const getPosts = async () => {
-      const data = await fetch_Posts(language);
-      setLoading(false);
-      setPosts(data);
+      if (!changeLang) {
+        if (userLanguage === "en-US" || userLanguage === "en-GB") {
+          const data = await fetch_Posts("en");
+          setLoading(false);
+          setPosts(data);
+        } else {
+          const data = await fetch_Posts("fr");
+          setLoading(false);
+          setPosts(data);
+        }
+      } else {
+        const data = await fetch_Posts(language);
+        setLoading(false);
+        setPosts(data);
+      }
     };
     getPosts();
-  }, [setPosts, language]);
+  }, [setPosts, language, userLanguage, changeLang]);
   if (loading) {
     return <SpinnerComponent />;
   }

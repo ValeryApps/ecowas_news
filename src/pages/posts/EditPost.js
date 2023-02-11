@@ -10,7 +10,6 @@ import { countries } from "../../data/countries";
 import { convertToHTML } from "draft-convert";
 import { EditorState } from "draft-js";
 import { fetch_post_by_id, update_post } from "../../firebase_api/postApi";
-import { v4 as uuid } from "uuid";
 import { toast } from "react-toastify";
 import { BarLoader } from "react-spinners";
 import { ImagePreview } from "../../components/images/ImagePreview";
@@ -98,6 +97,7 @@ export const EditPost = () => {
 
         let post = {
           ...postData,
+          slug,
           images: imageUrls,
           createdAt: Date.now().toString(),
         };
@@ -107,6 +107,7 @@ export const EditPost = () => {
       } else {
         let post = {
           ...postData,
+          slug,
           createdAt: Date.now().toString(),
         };
         await update_post(postId, post);
@@ -207,6 +208,14 @@ export const EditPost = () => {
                   <option value="video">Video</option>
                   <option value="text">Text</option>
                   <option value="images">Images</option>
+                </Select>
+                <Select
+                  onChange={handleOnChange}
+                  name="language"
+                  value={language}
+                >
+                  <option value="English">English</option>
+                  <option value="French">French</option>
                 </Select>
               </div>
               <div dangerouslySetInnerHTML={createMarkup(description)}></div>

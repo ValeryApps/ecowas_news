@@ -7,14 +7,25 @@ import { RightPost } from "./RightPost";
 
 export const PostCategory = ({ category }) => {
   const [posts, setPosts] = useState([]);
-  const { language } = useSelector((state) => ({ ...state.lang }));
+  const { language, changeLang } = useSelector((state) => ({ ...state.lang }));
+  const userLanguage = navigator.language;
   useEffect(() => {
     const getPosts = async () => {
-      const data = await fetch_Posts_per_category(category, language);
-      setPosts(data);
+      if (!changeLang) {
+        if (userLanguage === "en-US" || userLanguage === "en-GB") {
+          const data = await fetch_Posts_per_category(category, "en");
+          setPosts(data);
+        } else {
+          const data = await fetch_Posts_per_category(category, "fr");
+          setPosts(data);
+        }
+      } else {
+        const data = await fetch_Posts_per_category(category, language);
+        setPosts(data);
+      }
     };
     getPosts();
-  }, [setPosts, category, language]);
+  }, [setPosts, category, language, userLanguage, changeLang]);
   return (
     <div className="flex justify-between flex-wrap mb-2">
       <div className="w-full md:w-[41%]">
