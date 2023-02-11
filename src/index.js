@@ -6,6 +6,8 @@ import App from "./App";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { fetPostsAsync } from "./store/reducers/post";
+import "./helpers/i18n";
+
 const container = document.getElementById("root");
 const root = createRoot(container);
 store.dispatch(fetPostsAsync());

@@ -24,6 +24,7 @@ function App() {
       {(openCountries || openCategories) && (
         <div className="top-0 bottom-0 right-0 left-0 bg-black opacity-80 h-full flex justify-center items-center fixed z-50"></div>
       )}
+
       <AppHeader
         openCountries={openCountries}
         setOpenCountries={setOpenCountries}

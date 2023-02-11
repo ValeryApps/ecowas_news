@@ -1,5 +1,6 @@
 import { getAuth } from "firebase/auth";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { categories } from "../../data/categories";
 import { CategoriesDrawer } from "../drawer/CategoryDrawer";
@@ -13,10 +14,10 @@ export const AppHeader = ({
   openCategories,
   setOpenCategories,
 }) => {
+  const { t, i18n } = useTranslation();
   const [visible, setVisible] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { pathname } = useLocation();
-  // const { loggedIn } = useAuthStatus();
   const navigate = useNavigate();
   const auth = getAuth();
   const signOut = async () => {
@@ -26,7 +27,7 @@ export const AppHeader = ({
   return (
     <>
       <div className="hidden md:block">
-        <AppIntro visible={visible} setVisible={setVisible} />
+        <AppIntro visible={visible} setVisible={setVisible} i18n={i18n} t={t} />
       </div>
 
       <div className="w-full bg-teal-900 sticky top-0 py-2 z-50">
@@ -49,51 +50,7 @@ export const AppHeader = ({
                   : "text-white hover:text-teal-300 "
               } font-bold py-2 px-3 `}
             >
-<<<<<<< HEAD
-              Home
-=======
-              <div className="E24_icon">
-                <img src="../../../180.png" alt="" />
-              </div>
-            </h1>
-          </div>
-          <div className=" hidden md:flex">
-            <div>
-              {navItems.map(({ name, path }) => (
-                <Link
-                  key={name}
-                  to={path}
-                  className={`${
-                    path === pathname
-                      ? "text-[#05396d] font-bold bg-white rounded-[3px]"
-                      : "text-white"
-                  } p-2 hover:text-teal-300`}
-                >
-                  {name}
-                </Link>
-              ))}
-            </div>
-            <div>
-              {categories.slice(0, 3).map(({ text, link }) => (
-                <Link
-                  key={text}
-                  to={`/category/${link}`}
-                  className={`${
-                    pathname === `/category/${link}`
-                      ? "text-[#05396d] font-bold bg-white rounded-[3px]"
-                      : "text-white"
-                  } p-2 hover:text-teal-300`}
-                >
-                  {text}
-                </Link>
-              ))}
-            </div>
-            <Link to="#" onClick={() => setShowCategories((prev) => !prev)}>
-              <div className=" text-white flex items-center gap-1">
-                More stories
-                <IoEllipsisHorizontal />
-              </div>
->>>>>>> d4bd699cf3da6bd354e31d1d77c4943c1be02b39
+              {t("des.Home")}
             </Link>
             {categories.slice(0, 3).map(({ text, icon, link }) => (
               <Link
@@ -105,7 +62,7 @@ export const AppHeader = ({
                     : "text-white hover:text-teal-300 "
                 } font-bold py-2 px-3  `}
               >
-                {text}
+                {t(`des.${text}`)}
               </Link>
             ))}
             <div

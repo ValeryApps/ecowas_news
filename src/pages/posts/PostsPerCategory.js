@@ -5,22 +5,24 @@ import { Layout } from "../../components/layout/Layout";
 import { PostCard } from "../../components/posts/PostCard";
 import { SpinnerComponent } from "../../components/loader/SpinnerComponent";
 import { fetch_Posts_per_category } from "../../firebase_api/postApi";
+import { useSelector } from "react-redux";
 
 export const PostsPerCategory = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const { category } = useParams();
+  const { language } = useSelector((state) => ({ ...state.lang }));
 
   useEffect(() => {
     const getPosts = async () => {
       setLoading(true);
-      const data = await fetch_Posts_per_category(category);
+      const data = await fetch_Posts_per_category(category, language);
       setLoading(false);
       setPosts(data);
     };
     getPosts();
-  }, [category, setPosts]);
-  console.log(posts);
+  }, [category, setPosts, language]);
+
   if (loading) {
     return <SpinnerComponent />;
   }

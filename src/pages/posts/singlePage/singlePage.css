@@ -1,9 +1,9 @@
-p {
+/* p {
     display: block;
     margin-bottom: 20px;
     font-family: Georgia, 'Times New Roman', Times, serif;
     color: #3b3c3d;
-}
+} */
   
 .story_text p:first-of-type {
     font-weight: 700;
@@ -14,12 +14,12 @@ p {
     margin-top: 20px;
 }
 
-h3 {
+/* h3 {
     margin-bottom: 10px;
-}
+} */
    
 /* Comments */
-.comments_wrap {
+/* .comments_wrap {
     padding: 10px 15px;
 }
 
@@ -116,9 +116,9 @@ h3 {
 
 .comment_text h4 {
     display: inline;
-}
+} */
 
-.comment_img {
+/* .comment_img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -159,11 +159,11 @@ h3 {
     cursor: pointer;
     font-weight: 500;
 
-}
+} */
 
-.comment_container a {
+/* .comment_container a {
     text-decoration: underline;
     color: var(--green-val-color);
-}
+} */
 
-@media (max-width:636px) {}
+/* @media (max-width:636px) {} */

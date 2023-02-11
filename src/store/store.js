@@ -4,6 +4,7 @@ import auth from "./reducers/user";
 import comments from "./reducers/comment";
 import postPerCountry from "./reducers/post_country";
 import postPerCategory from "./reducers/post_category";
+import lang from "./reducers/lang";
 
 export const store = configureStore({
   reducer: {
@@ -12,5 +13,6 @@ export const store = configureStore({
     postPerCategory,
     auth,
     comments,
+    lang,
   },
 });

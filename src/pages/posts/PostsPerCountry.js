@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Layout } from "../../components/layout/Layout";
 import { SpinnerComponent } from "../../components/loader/SpinnerComponent";
@@ -10,16 +11,17 @@ export const PostsPerCountry = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const { country } = useParams();
+  const { language } = useSelector((state) => ({ ...state.lang }));
 
   useEffect(() => {
     const getPosts = async () => {
       setLoading(true);
-      const data = await fetch_Posts_per_country(country);
+      const data = await fetch_Posts_per_country(country, language);
       setLoading(false);
       setPosts(data);
     };
     getPosts();
-  }, [country, setPosts]);
+  }, [country, setPosts, language]);
   if (loading) {
     return <SpinnerComponent />;
   }

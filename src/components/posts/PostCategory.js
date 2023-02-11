@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { fetch_Posts_per_category } from "../../firebase_api/postApi";
 
 import { MainPost } from "./MainPost";
@@ -6,13 +7,14 @@ import { RightPost } from "./RightPost";
 
 export const PostCategory = ({ category }) => {
   const [posts, setPosts] = useState([]);
+  const { language } = useSelector((state) => ({ ...state.lang }));
   useEffect(() => {
     const getPosts = async () => {
-      const data = await fetch_Posts_per_category(category);
+      const data = await fetch_Posts_per_category(category, language);
       setPosts(data);
     };
     getPosts();
-  }, [setPosts, category]);
+  }, [setPosts, category, language]);
   return (
     <div className="flex justify-between flex-wrap mb-2">
       <div className="w-full md:w-[41%]">

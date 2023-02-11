@@ -3,42 +3,43 @@ import { useEffect, useState } from "react";
 import { getUserById } from "../firebase_api/AuthApi";
 
 export const useAuthStatus = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [loggedInAsAuthor, setLoggedInAsAuthor] = useState(false);
-  const [loggedInAsAdmin, setLoggedInAsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedInAsAdmin, setLoggedInAsAdmin] = useState(false);
+  const [loggedInAsMod, setLoggedInAsMod] = useState(false);
+  const auth = getAuth();
+
   useEffect(() => {
-    const checkIsAdmin = async () => {
-      const auth = getAuth();
-      let user;
-      if (auth.currentUser?.uid) {
-        user = await getUserById(auth.currentUser?.uid);
-      }
-
-      let isAuthor = false;
-      let isAdmin = false;
-      if (user) {
-        isAuthor = user["roles"]?.indexOf("author") !== -1;
-        isAdmin = user["roles"]?.indexOf("admin") !== -1;
-      }
-
-      onAuthStateChanged(
-        auth,
-        (currentUser) => {
-          if (currentUser && isAuthor) {
-            setLoggedInAsAuthor(true);
-          } else if (currentUser && isAdmin) {
-            setLoggedInAsAdmin(true);
-          } else if (currentUser) {
-            setLoggedIn(true);
+    onAuthStateChanged(
+      auth,
+      async (currentUser) => {
+        try {
+          if (currentUser) {
+            const user = await getUserById(currentUser?.uid);
+            const admin = user ? user["roles"]?.indexOf("admin") !== -1 : false;
+            const moderator = user
+              ? user["roles"]?.indexOf("moderator") !== -1
+              : false;
+            if (moderator) {
+              setLoggedInAsMod(true);
+              setLoggedIn(true);
+            } else if (admin) {
+              setLoggedInAsAdmin(true);
+              setLoggedIn(true);
+            } else if (currentUser) {
+              setLoggedIn(true);
+            }
+          } else {
+            setLoggedIn(false);
           }
-          setIsLoading(false);
-        },
-        []
-      );
-    };
-    checkIsAdmin();
-  }, []);
+          setLoading(false);
+        } catch (error) {
+          console.log(error.message);
+        }
+      },
+      []
+    );
+  }, [auth]);
 
-  return { isLoading, loggedInAsAuthor, loggedIn, loggedInAsAdmin };
+  return { loading, loggedInAsAdmin, loggedInAsMod, loggedIn };
 };

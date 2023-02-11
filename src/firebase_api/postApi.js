@@ -14,10 +14,18 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 
-export const fetch_Posts = async () => {
+export const fetch_Posts = async (lang) => {
   const postsRef = collection(db, "posts");
-
-  const postsQuery = query(postsRef, orderBy("createdAt", "desc"));
+  if (lang === "en") {
+    lang = "English";
+  } else {
+    lang = "French";
+  }
+  const postsQuery = query(
+    postsRef,
+    where("language", "==", lang),
+    orderBy("createdAt", "desc")
+  );
 
   const postsSnapshot = await getDocs(postsQuery);
 
@@ -76,11 +84,17 @@ export const fetch_post_by_id = async (postId) => {
   }
 };
 
-export const fetch_Posts_per_country = async (country) => {
+export const fetch_Posts_per_country = async (country, lang) => {
+  if (lang === "en") {
+    lang = "English";
+  } else {
+    lang = "French";
+  }
   const postsRef = collection(db, "posts");
   const qu = query(
     postsRef,
     where("country", "==", country),
+    where("language", "==", lang),
     orderBy("createdAt", "desc")
   );
   const postData = await getDocs(qu);
@@ -90,11 +104,17 @@ export const fetch_Posts_per_country = async (country) => {
     return postData.docs.map((post) => post.data());
   }
 };
-export const fetch_Posts_per_category = async (category) => {
+export const fetch_Posts_per_category = async (category, lang) => {
+  if (lang === "en") {
+    lang = "English";
+  } else {
+    lang = "French";
+  }
   const postsRef = collection(db, "posts");
   const qu = query(
     postsRef,
     where("category", "==", category),
+    where("language", "==", lang),
     orderBy("createdAt", "desc")
   );
   const postData = await getDocs(qu);

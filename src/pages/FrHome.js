@@ -12,15 +12,11 @@ import { HiUsers } from "react-icons/hi2";
 import { RightSide } from "../components/rightSide/RightSide";
 import { SpinnerComponent } from "../components/loader/SpinnerComponent";
 import { fetch_Posts } from "../firebase_api/postApi";
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
 
-export const Home = () => {
+export const FrHome = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [storyTitles, setStoryTitles] = useState([]);
-  const { language } = useSelector((state) => ({ ...state.lang }));
-  const { i18n, t } = useTranslation();
 
   useEffect(() => {
     setStoryTitles(posts?.map((post) => post.title));
@@ -29,12 +25,12 @@ export const Home = () => {
   useEffect(() => {
     setLoading(true);
     const getPosts = async () => {
-      const data = await fetch_Posts(language);
+      const data = await fetch_Posts();
       setLoading(false);
       setPosts(data);
     };
     getPosts();
-  }, [setPosts, language]);
+  }, [setPosts]);
   if (loading) {
     return <SpinnerComponent />;
   }
@@ -64,37 +60,37 @@ export const Home = () => {
         <div className="flex justify-between">
           <div className=" w-full lg:max-w-[75%] ">
             <div>
-              <CategoryPill category={"Politics"} t={t}>
+              <CategoryPill category={"Politics"}>
                 <GiPublicSpeaker />
               </CategoryPill>
-              <PostCategory category={"politics"} />
+              <PostCategory category="politics" />
             </div>
             <div>
-              <CategoryPill category={"Sports"} t={t}>
+              <CategoryPill category={"Sports"}>
                 <FaRunning />
               </CategoryPill>
               <PostCategory category={"sports"} />
             </div>
             <div>
-              <CategoryPill category={"Economy"} t={t}>
+              <CategoryPill category={"Economy"}>
                 <BsGraphUp />
               </CategoryPill>
               <PostCategory category={"economy"} />
             </div>
             <div>
-              <CategoryPill category={"Technology"} t={t}>
+              <CategoryPill category={"Technology"}>
                 <MdComputer />
               </CategoryPill>
               <PostCategory category={"technology"} />
             </div>
             <div>
-              <CategoryPill category={"Education"} t={t}>
+              <CategoryPill category={"Education"}>
                 <GiOpenBook />
               </CategoryPill>
               <PostCategory category={"education"} />
             </div>
             <div>
-              <CategoryPill category={"Society"} t={t}>
+              <CategoryPill category={"Society"}>
                 <HiUsers />
               </CategoryPill>
               <PostCategory category={"society"} />

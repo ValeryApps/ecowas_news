@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { categories } from "../../data/categories";
 
-export const CategoriesLink = ({ setVisible }) => {
+export const CategoriesLink = ({ setVisible, t }) => {
   return (
     <div className="flex items-center gap-3 shadow-md px-2 rounded-md bg-white opacity-50 justify-between">
       {categories.slice(3).map(({ text, link, icon }) => (
@@ -13,7 +13,7 @@ export const CategoriesLink = ({ setVisible }) => {
             className="text-teal-800 font-bold text-md p-3"
             onClick={() => setVisible(false)}
           >
-            {text}
+            {t(`des.${text}`)}
           </Link>
         </div>
       ))}

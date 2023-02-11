@@ -26,6 +26,7 @@ import { addComment } from "../../../store/reducers/comment";
 import { useAuthStatus } from "../../../hooks/useAuthStatus";
 import { capitalize } from "../../../helpers/capitalize";
 import { BsClock } from "react-icons/bs";
+import { useTranslation } from "react-i18next";
 
 export const SinglePost = () => {
   const [loading, setLoading] = useState(false);
@@ -39,14 +40,14 @@ export const SinglePost = () => {
   const [text, setText] = useState("");
   const { comments, count } = useSelector((state) => ({ ...state.comments }));
   const dispatch = useDispatch();
-  const { loggedInAsAdmin } = useAuthStatus();
+  const { loggedInAsAdmin, loggedInAsMod } = useAuthStatus();
   const { slug } = useParams();
   const { currentUser } = getAuth();
   const navigate = useNavigate();
-  const similarStories = posts?.filter(
-    (x) => x.category === post?.category && x.slug !== post?.slug
-  );
-
+  // const similarStories = posts?.filter(
+  //   (x) => x.category === post?.category && x.slug !== post?.slug
+  // );
+  const { language } = useSelector((state) => ({ ...state.lang }));
   useEffect(() => {
     const fetchPost = async () => {
       setLoading(true);
@@ -95,13 +96,7 @@ export const SinglePost = () => {
   if (!post || loading) {
     return <SpinnerComponent />;
   }
-  // const handleLikeComment = async (commentId) => {
-  //   const isCommentLike = await likeComment(commentId, currentUser?.uid);
-  //   setCommentLike(isCommentLike);
-  //   isCommentLike
-  //     ? setCommentLikeCount(commentLikeCount + 1)
-  //     : setCommentLikeCount(commentLikeCount - 1);
-  // };
+  console.log(language);
 
   const submitComment = async (e) => {
     e.preventDefault();
@@ -145,7 +140,11 @@ export const SinglePost = () => {
             Similar Stories
           </h1>
           <div className="pt-2">
-            <SimilarPosts posts={similarStories} />
+            <SimilarPosts
+              category={post?.category}
+              language={language}
+              slug={post?.slug}
+            />
           </div>
         </div>
         <div className="w-full bg-white rounded-t-xl">
@@ -155,7 +154,7 @@ export const SinglePost = () => {
             </h2>
           </div>
           <div className="pb-6">
-            <img src={post?.images[0]} alt={post?.title} className="w-full" />
+            <img src={post?.images[0]} alt="" className="w-full" />
             <div className="flex gap-6 px-3 bg-white shadow-md py-2 w-fit ml-2 items-center rounded-md">
               <span>
                 Country: <strong> {capitalize(post?.country)}</strong>
@@ -173,10 +172,18 @@ export const SinglePost = () => {
                 ></Moment>
               </span>
             </div>
-            <div className="mt-5 [p:first-of-type:font-bold] px-3 text-gray-700">
+            <div className="story_text [p:first-of-type:font-bold] px-3 text-gray-700 flex flex-col items-end ">
               <div
                 dangerouslySetInnerHTML={createMarkup(post?.description)}
               ></div>
+              <a
+                className="bg-teal-600 text-white px-4 py-2 rounded-md"
+                href={post.externUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Read More...
+              </a>
             </div>
             <div className="flex items-center gap-2 ml-2">
               {like ? (
@@ -218,7 +225,7 @@ export const SinglePost = () => {
             />
           </div>
           {/* admin or author who owns this post can have access to this area or */}
-          {(loggedInAsAdmin || currentUser?.uid === post.userId) && (
+          {(loggedInAsAdmin || loggedInAsMod) && (
             <div className=" flex gap-2 m-3">
               <AiFillDelete className="text-red-700" />
               <Link to={`/edit-post/${post.id}`}>

@@ -9,9 +9,9 @@ const initialState = {
 
 export const fetPostsAsync = createAsyncThunk(
   "posts/fetPostsAsync",
-  async () => {
+  async (lang) => {
     try {
-      const data = await fetch_Posts();
+      const data = await fetch_Posts(lang);
       return data;
     } catch (error) {
       console.log(error);
