@@ -13,7 +13,11 @@ import { AiFillDelete } from "react-icons/ai";
 import { FaRegEdit } from "react-icons/fa";
 import { MdFavorite, MdOutlineFavoriteBorder } from "react-icons/md";
 import { create_comment } from "../../../firebase_api/commentApi";
-import { fetch_post_by_slug, likePost } from "../../../firebase_api/postApi";
+import {
+  delete_post,
+  fetch_post_by_slug,
+  likePost,
+} from "../../../firebase_api/postApi";
 import { getAuth } from "firebase/auth";
 import { SpinnerComponent } from "../../../components/SpinnerComponent";
 import Moment from "react-moment";
@@ -26,49 +30,40 @@ import { addComment } from "../../../store/reducers/comment";
 import { useAuthStatus } from "../../../hooks/useAuthStatus";
 import { capitalize } from "../../../helpers/capitalize";
 import { BsClock } from "react-icons/bs";
-import { useTranslation } from "react-i18next";
+import { removePost } from "../../../store/reducers/post";
+// import { useTranslation } from "react-i18next";
 
 export const SinglePost = () => {
-  const [loading, setLoading] = useState(false);
+  const { slug } = useParams();
+  const [post, setPost] = useState(null);
   const [commentLoading, setCommentLoading] = useState(false);
-  const [post, setPost] = useState();
-  const { posts } = useSelector((state) => ({ ...state.posts }));
+  const [loading, setLoading] = useState(false);
   const [like, setLike] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
-  // const [commentCount, setCommentCount] = useState(0);
   const [text, setText] = useState("");
   const { comments, count } = useSelector((state) => ({ ...state.comments }));
   const dispatch = useDispatch();
   const { loggedInAsAdmin, loggedInAsMod } = useAuthStatus();
-  const { slug } = useParams();
   const { currentUser } = getAuth();
   const navigate = useNavigate();
-  // const similarStories = posts?.filter(
-  //   (x) => x.category === post?.category && x.slug !== post?.slug
-  // );
+
   const { language } = useSelector((state) => ({ ...state.lang }));
   useEffect(() => {
     const fetchPost = async () => {
       setLoading(true);
       try {
-        let story;
-        if (posts?.length > 0) {
-          story = posts?.find((x) => x.slug === slug);
-          setLoading(false);
-          dispatch(await fetchCommentsAsync(story.id));
-        } else {
-          story = await fetch_post_by_slug(slug);
-          dispatch(await fetchCommentsAsync(story.id));
-          setLoading(false);
-        }
+        const story = await fetch_post_by_slug(slug);
         setPost(story);
+        dispatch(await fetchCommentsAsync(story.id));
+        setLoading(false);
       } catch (error) {
-        // console.log(error.message);
+        setLoading(false);
+        console.log(error.message);
       }
     };
     fetchPost();
-  }, [slug, posts, dispatch]);
+  }, [slug, dispatch]);
 
   useEffect(() => {
     if (post?.likes?.indexOf(currentUser?.uid) !== -1) {
@@ -85,7 +80,7 @@ export const SinglePost = () => {
   }, [dispatch, post]);
 
   const handleLikePost = async () => {
-    if (currentUser.uid) {
+    if (currentUser?.uid) {
       const isLiked = await likePost(post?.id, currentUser?.uid);
       isLiked ? setLikeCount(likeCount + 1) : setLikeCount(likeCount - 1);
       setLike(isLiked);
@@ -93,11 +88,14 @@ export const SinglePost = () => {
       navigate("/login");
     }
   };
-  if (!post || loading) {
+  if (!post) {
     return <SpinnerComponent />;
   }
-  console.log(language);
-
+  const deletePost = async (id) => {
+    window.confirm("Are you sure you want to delete?");
+    await delete_post(id);
+    dispatch(removePost(id));
+  };
   const submitComment = async (e) => {
     e.preventDefault();
     if (currentUser === null) {
@@ -111,8 +109,6 @@ export const SinglePost = () => {
           commentId,
           postId: post?.id,
           commentedBy: currentUser?.uid,
-          likeCount: 0,
-          likes: [],
           username: currentUser?.displayName,
           createdAt: Date.now(),
         };
@@ -227,7 +223,10 @@ export const SinglePost = () => {
           {/* admin or author who owns this post can have access to this area or */}
           {(loggedInAsAdmin || loggedInAsMod) && (
             <div className=" flex gap-2 m-3">
-              <AiFillDelete className="text-red-700" />
+              <AiFillDelete
+                className="text-red-700 cursor-pointer"
+                onClick={() => deletePost(post.id)}
+              />
               <Link to={`/edit-post/${post.id}`}>
                 <FaRegEdit className="text-green-700" />
               </Link>

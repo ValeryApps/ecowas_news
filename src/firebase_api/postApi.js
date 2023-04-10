@@ -11,6 +11,7 @@ import {
   arrayUnion,
   arrayRemove,
   deleteDoc,
+  limit,
 } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -24,6 +25,7 @@ export const fetch_Posts = async (lang) => {
   const postsQuery = query(
     postsRef,
     where("language", "==", lang),
+    limit(10),
     orderBy("createdAt", "desc")
   );
 
@@ -40,6 +42,7 @@ export const fetch_Posts = async (lang) => {
 
   return posts;
 };
+
 export const fetch_post_by_slug = async (slug) => {
   try {
     const postsRef = await collection(db, "posts");
@@ -71,6 +74,7 @@ export const update_post = async (id, data) => {
     throw error;
   }
 };
+
 export const fetch_post_by_id = async (postId) => {
   try {
     const postRef = doc(db, "posts", postId);
@@ -95,7 +99,8 @@ export const fetch_Posts_per_country = async (country, lang) => {
     postsRef,
     where("country", "==", country),
     where("language", "==", lang),
-    orderBy("createdAt", "desc")
+    orderBy("createdAt", "desc"),
+    limit(10)
   );
   const postData = await getDocs(qu);
   if (country === null) {
@@ -104,6 +109,7 @@ export const fetch_Posts_per_country = async (country, lang) => {
     return postData.docs.map((post) => post.data());
   }
 };
+
 export const fetch_Posts_per_category = async (category, lang) => {
   if (lang === "en") {
     lang = "English";
@@ -115,7 +121,8 @@ export const fetch_Posts_per_category = async (category, lang) => {
     postsRef,
     where("category", "==", category),
     where("language", "==", lang),
-    orderBy("createdAt", "desc")
+    orderBy("createdAt", "desc"),
+    limit(10)
   );
   const postData = await getDocs(qu);
   return postData.docs.map((post) => post.data());
@@ -140,6 +147,7 @@ export const likePost = async (postId, userId) => {
     return false;
   }
 };
+
 export const delete_post = async (postId) => {
   let response = "";
   const postRef = doc(db, "posts", postId);

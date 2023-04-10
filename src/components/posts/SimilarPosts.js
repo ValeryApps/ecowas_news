@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { createMarkup } from "../../helpers/parseHtml";
+import { createMarkup } from "../../helpers/parseHTML";
 
 export const SimilarPosts = ({ posts }) => {
   return (

@@ -11,7 +11,6 @@ const lngs = {
 export const AppIntro = ({ visible, i18n, t }) => {
   const dispatch = useDispatch();
 
-  // console.log(i18n.language);
   return (
     <div className="w-full bg-gradient-to-b from-teal-800 via-teal-600 to-teal-800 h-40 relative">
       <div>

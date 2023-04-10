@@ -3,8 +3,8 @@ import { IoSend } from "react-icons/io5";
 
 const CreateComment = ({ submitComment, text, setText, commentLoading }) => {
   return (
-    <div className="create_comment_wrap">
-      <div className="create_comment">
+    <div>
+      <div className="flex items-center justify-between">
         <textarea
           type="text"
           onChange={(e) => setText(e.target.value)}

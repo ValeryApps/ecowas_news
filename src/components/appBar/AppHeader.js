@@ -71,18 +71,42 @@ export const AppHeader = ({
             >
               More News...
             </div>
+            <div>
+              <Link
+                to="/videos"
+                className={` ${
+                  pathname === "/videos"
+                    ? "bg-white text-teal-800 rounded-md hover:text-black "
+                    : "text-white hover:text-teal-300 border-2 border-white rounded-md  "
+                } font-bold py-2 px-3 `}
+              >
+                Videos
+              </Link>
+            </div>
+          </div>
+          <div>
+            <Link
+              to="/videos"
+              className={` ${
+                pathname === "/videos"
+                  ? "bg-white text-teal-800 rounded-md hover:text-black "
+                  : "text-white hover:text-teal-300 border-2 border-white rounded-md  "
+              } font-bold py-2 px-3 `}
+            >
+              Videos
+            </Link>
           </div>
           {!auth.currentUser ? (
             <div className="gap-3 flex items-center">
               <Link to="/login" className="text-white hover:text-teal-300  ">
                 LOGIN
               </Link>
-              <Link
+              {/* <Link
                 to="/register"
                 className="bg-teal-500 px-3 py-1 rounded-md text-white"
               >
                 SIGN UP
-              </Link>
+              </Link> */}
             </div>
           ) : (
             <div
@@ -90,7 +114,7 @@ export const AppHeader = ({
               onMouseEnter={() => setShowMenu(true)}
               onMouseLeave={() => setShowMenu(false)}
             >
-              {auth.currentUser.displayName}
+              {auth.currentUser.displayName.split(" ")[0]}
               {showMenu && <UserMenu logout={signOut} />}
             </div>
           )}

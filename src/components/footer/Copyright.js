@@ -2,9 +2,23 @@ import { IoLocationSharp } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
 export const Copyright = ({ country }) => {
+  const getCurrentYear = ()=>{
+    return new Date().getFullYear();
+  }
   return (
     <div>
-      <section>Ecowas24 News 2023. All Rights Reserved</section>
+     <div className="">
+        © {getCurrentYear()} -{" "}
+        <span className="purpleColor font13">Ecowas24 News</span>{" "}
+        <span className="font-normal">All Right Reserved</span>
+        <p className="block">
+          <span className="underline underline-offset-2">
+            {" "}
+            Development and designed by:
+          </span>{" "}
+          AVT (Africa Victory-Tech)
+        </p>
+      </div>
       <section className="flex gap-1 text-sm text-[#555] mb-3 items-center">
         <ul className="flex items-center flex-wrap gap-4">
           {data.map((d) => (

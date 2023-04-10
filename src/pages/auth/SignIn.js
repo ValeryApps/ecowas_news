@@ -17,6 +17,7 @@ export const SignIn = () => {
   const [isPassword, setIsPassword] = useState(true);
   const navigate = useNavigate();
   const { email, password } = user;
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
@@ -38,7 +39,6 @@ export const SignIn = () => {
       }
     }
   };
-  console.log(email);
   return (
     <div className=" mx-auto md:w-[40%] sm:w-[75%] w-full shadow-md p-4 h-fit my-4 rounded-md bg-white">
       <h1 className="text-center text-3xl text-teal-700  px-3 py-2">

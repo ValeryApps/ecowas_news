@@ -14,6 +14,11 @@ import { SignIn } from "./pages/auth/SignIn";
 import { SignUp } from "./pages/auth/SignUp";
 import { Posts } from "./admin/posts/Posts";
 import "react-toastify/dist/ReactToastify.css";
+import { About } from "./pages/About";
+import { Contact } from "./pages/Contact";
+import { Videos } from "./pages/videos/Videos";
+import { AddVideo } from "./pages/videos/AddVideo";
+import { VideoDetails } from "./pages/videos/VideoDetails";
 
 function App() {
   const [openCountries, setOpenCountries] = useCycle(false, true);
@@ -38,23 +43,19 @@ function App() {
           <Route element={<PrivateRoute />}>
             <Route path="/create-post/" element={<AddPost />} />
             <Route path="/edit-post/:postId" element={<EditPost />} />
-            <Route path="/posts" element={<Posts />} />
+            <Route path="/admin/posts" element={<Posts />} />
           </Route>
           <Route path="/" element={<Home />} />
-          {/* <Route path="/about" element={<About />} /> */}
           <Route path="/login" element={<SignIn />} />
           <Route path="/register" element={<SignUp />} />
-
-          <Route path="/admin/posts" element={<Posts />} />
           <Route path="/post/:slug" element={<SinglePost />} />
           <Route path="/countries/:country" element={<PostsPerCountry />} />
           <Route path="/categories/:category" element={<PostsPerCategory />} />
-          {/* <Route path="/contact" element={<Contact />} />  */}
-          {/* 
-         
-          
-         
-          <Route path="/create-post/:slug" element={<AddPost />} /> */}
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/videos" element={<Videos />} />
+          <Route path="/add-video" element={<AddVideo />} />
+          <Route path="/videos/:slug" element={<VideoDetails />} />
         </Routes>
       </div>
       <AppFooter />

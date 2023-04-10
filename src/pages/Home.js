@@ -4,7 +4,7 @@ import { SlideShow } from "../components/slide/SlideShow";
 import Typewriter from "typewriter-effect";
 import { PostCategory } from "../components/posts/PostCategory";
 import { CategoryPill } from "../components/posts/CategoryPill";
-import { GiPublicSpeaker, GiOpenBook } from "react-icons/gi";
+import { GiPublicSpeaker, GiInjustice } from "react-icons/gi";
 import { FaRunning } from "react-icons/fa";
 import { BsGraphUp } from "react-icons/bs";
 import { MdComputer } from "react-icons/md";
@@ -14,13 +14,15 @@ import { SpinnerComponent } from "../components/loader/SpinnerComponent";
 import { fetch_Posts } from "../firebase_api/postApi";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { fetch_videos } from "../firebase_api/videoApi";
 
 export const Home = () => {
   const [posts, setPosts] = useState([]);
+  const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [storyTitles, setStoryTitles] = useState([]);
   const userLanguage = navigator.language;
-  console.log(userLanguage);
+
   const { language, changeLang } = useSelector((state) => ({ ...state.lang }));
 
   const { t } = useTranslation();
@@ -50,6 +52,27 @@ export const Home = () => {
     };
     getPosts();
   }, [setPosts, language, userLanguage, changeLang]);
+  useEffect(() => {
+    setLoading(true);
+    const getVideos = async () => {
+      if (!changeLang) {
+        if (userLanguage === "en-US" || userLanguage === "en-GB") {
+          const data = await fetch_videos("en");
+          setLoading(false);
+          setVideos(data);
+        } else {
+          const data = await fetch_videos("fr");
+          setLoading(false);
+          setVideos(data);
+        }
+      } else {
+        const data = await fetch_videos(language);
+        setLoading(false);
+        setVideos(data);
+      }
+    };
+    getVideos();
+  }, [setVideos, language, userLanguage, changeLang]);
   if (loading) {
     return <SpinnerComponent />;
   }
@@ -103,10 +126,10 @@ export const Home = () => {
               <PostCategory category={"technology"} />
             </div>
             <div>
-              <CategoryPill category={"Education"} t={t}>
-                <GiOpenBook />
+              <CategoryPill category={"Justice"} t={t}>
+                <GiInjustice />
               </CategoryPill>
-              <PostCategory category={"education"} />
+              <PostCategory category={"justice"} />
             </div>
             <div>
               <CategoryPill category={"Society"} t={t}>
@@ -116,7 +139,7 @@ export const Home = () => {
             </div>
           </div>
           <div className="hidden lg:block w-[24%] mt-8">
-            <RightSide posts={posts} />
+            <RightSide posts={posts} videos={videos} />
           </div>
         </div>
       </div>

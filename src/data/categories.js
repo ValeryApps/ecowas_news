@@ -2,6 +2,8 @@ export const categories = [
   { text: "Politics", icon: "/images/politics.jpg", link: "politics" },
   { text: "Economy", icon: "/images/economy.jpg", link: "economy" },
   { text: "Business", icon: "/images/business.png", link: "business" },
+  { text: "Security", icon: "/images/security.jpg", link: "security" },
+  { text: "Justice", icon: "/images/justice.png", link: "justice" },
   {
     text: "Entertainment",
     icon: "/images/entertainment.png",
@@ -13,6 +15,7 @@ export const categories = [
   { text: "Health", icon: "/images/health.png", link: "health" },
   { text: "Science", icon: "/images/science.jpg", link: "science" },
   { text: "Society", icon: "/images/society.png", link: "society" },
-  { text: "Editorial", icon: "/images/society.png", link: "editorial" },
-  { text: "Commentary", icon: "/images/society.png", link: "commentary" },
+  { text: "Diplomacy", icon: "/images/diplomacy.png", link: "diplomacy" },
+  { text: "Editorial", icon: "/images/editorial.png", link: "editorial" },
+  { text: "Commentary", icon: "/images/commentary.png", link: "commentary" },
 ];

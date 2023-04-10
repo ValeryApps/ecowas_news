@@ -10,14 +10,14 @@ export const Country = () => {
   const { posts } = useSelector((state) => ({ ...state.postPerCountry }));
   const dispatch = useDispatch();
   const { country } = useParams();
-  console.log(posts);
-  // const stories = posts?.filter((x) => x.country === country);
+
   useEffect(() => {
     const loadPost = async () => {
       dispatch(await fetPostsPerCountryAsync(country));
     };
     loadPost();
   }, [dispatch, country]);
+  console.log("Hello world");
   return (
     <Layout>
       <Helmet>
@@ -37,6 +37,7 @@ export const Country = () => {
         </div>
       ) : (
         <div className="w-full flex justify-center">
+          <h1>There is nothing here</h1>
           <img src="/nothing.gif" alt="" />
         </div>
       )}

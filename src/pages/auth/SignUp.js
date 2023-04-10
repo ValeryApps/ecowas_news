@@ -20,10 +20,12 @@ export const SignUp = () => {
   const [isPassword, setIsPassword] = useState(true);
   const navigate = useNavigate();
   const { username, email, password } = user;
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
   };
+
   const validate = Yup.object({
     username: Yup.string().required(),
     email: Yup.string().email().required(),

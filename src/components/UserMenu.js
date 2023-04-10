@@ -30,6 +30,17 @@ export const UserMenu = ({ logout }) => {
             <li className="hover:bg-gray-200 rounded-lg font-semibold ">
               <Link
                 className="flex items-center gap-3 cursor-pointer p-2"
+                to="/add-video"
+              >
+                <GrAdd />
+                <span className="hover:text-teal-500 text-gray-700">
+                  ADD Video
+                </span>
+              </Link>
+            </li>
+            <li className="hover:bg-gray-200 rounded-lg font-semibold ">
+              <Link
+                className="flex items-center gap-3 cursor-pointer p-2"
                 to="/admin/posts"
               >
                 <GrList />
